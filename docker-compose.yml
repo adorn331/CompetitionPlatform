@@ -1,0 +1,157 @@
+# --------------------------------------------------------------------------
+# for local development, use nginx to replace caddy
+# docker-compose -f dev-compose.yml up -d
+# --------------------------------------------------------------------------
+
+version: '2'
+services:
+  # --------------------------------------------------------------------------
+  # HTTP Server
+  # --------------------------------------------------------------------------
+  nginx:
+    image: nginx
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+      - ${SSL_PORT}:${SSL_PORT}
+    command: bash -x /app/docker/run_nginx.sh
+    volumes:
+      - ./certs:/app/certs
+      - ./docker:/app/docker
+      - ./CompetitionPlatform:/app/CompetitionPlatform
+      - ${LOGGING_DIR}/nginx:/var/log/nginx/
+    env_file: .env
+    links:
+      - django:django
+    logging:
+      options:
+        max-size: "200k"
+    container_name: nginx
+
+
+  # --------------------------------------------------------------------------
+  # Database
+  # --------------------------------------------------------------------------
+  postgres:
+    image: postgres:9.6.3
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./docker:/app/docker
+      - ${LOGGING_DIR}/psql:/var/log/psql
+      - ${DB_DATA_PATH}:/var/lib/postgresql/data
+      - ./backups:/app/backups
+    env_file: .env
+    logging:
+      options:
+        max-size: "200k"
+    container_name: postgres
+
+
+  # --------------------------------------------------------------------------
+  # Django
+  # --------------------------------------------------------------------------
+  django:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    restart: unless-stopped
+    hostname: django
+    ports:
+      - ${DJANGO_PORT}:${DJANGO_PORT}
+    command: bash /app/docker/run_django.sh
+    volumes:
+      - ./certs:/app/certs
+      - ./CompetitionPlatform:/app/CompetitionPlatform
+      - ./docker:/app/docker
+      - ${LOGGING_DIR}/django:/var/log/django/
+      - ./backups:/app/backups
+    env_file: .env
+    environment:
+      - CONFIG_SERVER_NAME=${CompetitionPlatform_SITE_DOMAIN}
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    logging:
+      options:
+        max-size: "200k"
+    container_name: django
+
+  # # --------------------------------------------------------------------------
+  # # Message queue: can work, for later use.
+  # # --------------------------------------------------------------------------
+  # rabbit:
+  #   build:
+  #     # Custom Dockerfile for rabbit mostly to make building faster because
+  #     # of envsubst dependency
+  #     context: .
+  #     dockerfile: docker/rabbitmq/Dockerfile
+  #   restart: unless-stopped
+  #   hostname: rabbit
+  #   command: bash -x /app/docker/run_rabbitmq.sh
+  #   environment:
+  #     - RABBITMQ_LOGS=/var/log/rabbitmq/output.log
+  #     - RABBITMQ_SASL_LOGS=/var/log/rabbitmq/output_sasl.log
+  #   env_file: .env
+  #   volumes:
+  #     - ./docker:/app/docker
+  #     - ./certs:/app/certs
+  #     - ${LOGGING_DIR}/rabbitmq:/var/log/rabbitmq
+  #     - ./var/data/rabbitmq/:/var/lib/rabbitmq/mnesia
+  #   ports:
+  #     - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+  #     - ${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}
+  #   logging:
+  #     options:
+  #       max-size: "200k"
+  #   container_name: rabbit
+
+  # # --------------------------------------------------------------------------
+  # # Celery Workers: can work, for later use.
+  # # --------------------------------------------------------------------------
+  # worker_site:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/django/Dockerfile
+  #   restart: unless-stopped
+  #   command: sh /app/docker/run_site.sh
+  #   volumes:
+  #     - ./CompetitionPlatform:/app/CompetitionPlatform
+  #     - ./docker:/app/docker
+  #     - ./certs:/app/certs
+  #     - ${LOGGING_DIR}/worker_site:/var/log/
+  #   environment:
+  #     # Stop memory leaks
+  #     - REQUESTS_CA_BUNDLE=/usr/local/lib/python3.7/site-packages/certifi/cacert.pem
+  #     - DEBUG=False
+  #   env_file: .env
+  #   links:
+  #     - postgres
+  #     - rabbit
+  #   logging:
+  #     options:
+  #       max-size: "200k"
+  #   container_name: worker_site
+
+  # worker_compute:
+  #   build:
+  #     context: .
+  #     dockerfile: compute_worker/Dockerfile
+  #   privileged: true
+  #   volumes:
+  #     - ${LOGGING_DIR}/worker_compute:/var/log/
+  #     - ${SUBMISSION_TEMP_DIR}:${SUBMISSION_TEMP_DIR}
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   env_file: compute_worker/.env
+  #   links:
+  #     - rabbit
+  #   logging:
+  #     options:
+  #       max-size: "200k"
+  #   mem_limit: 1g
+  #   memswap_limit: 1g
+  #   container_name: worker_compute    
