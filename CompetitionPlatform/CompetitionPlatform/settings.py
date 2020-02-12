@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'apps.demo',
-    'apps.users',
+    'apps.authenz',
     'rest_framework',
     'rest_framework_swagger',
 ]
@@ -230,4 +230,4 @@ BROKER_URL = os.environ.get('BROKER_URL', 'pyamqp://guest:guest@rabbit//')
 # =========================================================================
 LOGIN_URL = os.environ.get('LOGIN_URL', '/login')
 LOGIN_REDIRECT_URL = os.environ.get('LOGIN_URL', '/home')
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'authenz.User'

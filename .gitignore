@@ -1,0 +1,116 @@
+# Docker #
+##########
+.env
+!certs/.gitkeep
+certs/
+var/
+*_old/
+docker-compose.override.yml
+
+# CompetitionPlatform Files #
+#################
+CompetitionPlatform/node_modules/
+CompetitionPlatform/config/generated
+CompetitionPlatform/static/**/**
+CompetitionPlatform/media/**/**
+CompetitionPlatform/clip
+**/**/.CompetitionPlatformconfig
+CompetitionPlatform/scores.txt
+CompetitionPlatform/CompetitionPlatform/scores.txt
+CompetitionPlatform/apps/web/static/css/imports.css
+CompetitionPlatform/celerybeat-schedule
+
+# Virtuelenv files #
+####################
+**/**/venv
+venv/
+
+# Project Files #
+#################
+*.pyproj
+*.suo
+*.sln
+
+# Python specific files #
+#########################
+*.pot
+*.pyc
+**/build/**
+**/dist/**
+
+# Editor backup files #
+#######################
+*~
+\#*\#
+.\#*
+*.swp
+.idea/
+CompetitionPlatform/.idea/
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sql.gz
+*.sqlite*
+*.db
+*.pid
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+CompetitionPlatform/static/*/*
+CompetitionPlatform/config/generated
+*.dump
+*.cache
+wheel_packages/
+
+# Local mode
+**/vendor/ace-editor
+**/vendor/mathjax
+MathJax-master
+ace-builds-master
+
+# Local files to be ignored #
+##############################
+/CompetitionPlatform/local_fabfile.py
+/CompetitionPlatform/server_config.yaml
+
+# Stress testing #
+##################
+scripts/stress_testing/approve_emails.txt
+scripts/stress_testing/submission_ids.txt
+scripts/stress_testing/report.csv
+
+# Backups #
+###########
+backups/

@@ -8,3 +8,14 @@ class User(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         pass
+
+    # 元数据 增强可读性
+    class Meta:
+        verbose_name = '用户'
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.username
+
+    def __unicode__(self):
+        return self.username
