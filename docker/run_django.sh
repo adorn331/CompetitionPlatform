@@ -21,6 +21,26 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 
 
+# Automatically create superuser when start
+USER="admin" 
+PASS="admin" 
+MAIL="admin@admin.com" 
+script=" 
+from apps.authenz.models import User; 
+
+username = '$USER'; 
+password = '$PASS'; 
+email = '$MAIL'; 
+
+if User.objects.filter(username=username).count()==0: 
+    User.objects.create_superuser(username, email, password); 
+    print('Superuser created.'); 
+else: 
+    print('Superuser creation skipped.'); 
+" 
+printf "$script" | python manage.py shell
+
+
 # If the above migrations are failing upgrade an older database like so:
 #   # Unsure why I had to specially migrate this one
 #   $ python manage.py migrate oauth2_provider --fake

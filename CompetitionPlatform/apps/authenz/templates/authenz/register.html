@@ -2,28 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户登录</title>
+    <title>用户注册</title>
     <link rel="stylesheet" href="../../static/authenz/css/semantic.css">
 </head>
 <body style="background-color: #DADADA">
     <div class="ui center aligned grid" style="margin-top: 170px">
         <div class="ui six wide column">
-            <h1 class="ui teal header">竞赛代码收集分析平台</h1>
+            <h1 class="ui teal header">管理员注册</h1>
             <div class="ui segment">
                 <div class="ui content">
-                    <form class="ui form" method="post" action="/authenz/login/">
+                    <form class="ui form" method="post" action="/authenz/register/">
                         <div class="field">
                              <input type="text" name="username" placeholder="username"><br>
                         </div>
                         <div class="field">
                             <input type="password" name="password" placeholder="password"><br>
                         </div>
+                        <div class="field">
+                            <input type="email" name="email" placeholder="email"><br>
+                        </div>
                         <div style="color: red">{{ error }}</div><br>
-                        <button class="ui fluid large teal button" type="submit">登陆</button>
+                        <button class="ui fluid large teal button" type="submit">注册</button>
+                        <div class="ui message">
+                            已有账号? <a href="/authenz/login">登录</a>
+                        </div>
                     </form>
-                    <div class="ui message">
-                        新管理员? <a href="/authenz/register">注册</a>
-                    </div>
                 </div>
             </div>
         </div>
