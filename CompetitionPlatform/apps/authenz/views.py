@@ -1,5 +1,4 @@
 from apps.authenz.models import User
-from apps.authenz.forms import UserForm
 from django.http.response import HttpResponse
 import json
 from django.contrib.auth import authenticate, login, logout
@@ -44,7 +43,7 @@ def user_register(request):
 
         except Exception as e:
             traceback.print_exc()
-            return HttpResponse('internal error')
+            return HttpResponse('internal error')   # todo pretty
     else:
         return render(request, 'authenz/register.html', locals())
 
@@ -57,7 +56,7 @@ def user_login(request):
         if user is not None:
             login(request, user)  # 登录
             request.session['user'] = username  # 将session信息记录到浏览器
-            return HttpResponse('login success!')
+            return redirect('/competition')
         else:
             error = 'username or password error!'
             return render(request, 'authenz/login.html', locals())
@@ -65,17 +64,19 @@ def user_login(request):
         return render(request, 'authenz/login.html')
 
 
+# todo make a button and integrate it
 def user_logout(request):
     try:
         logout(request)
 
-        return HttpResponse(content_type="application/json", status=200)
+        return redirect('/authenz/login')
 
     except Exception as e:
 
-        return HttpResponse(content_type="application/json", status=500)
+        return redirect('/authenz/login')
 
 
+# todo remove?
 def query_user(request):
     try:
         if request.user.username == '':

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'apps.demo',
     'apps.authenz',
+    'apps.competition',
     'rest_framework',
     'rest_framework_swagger',
 ]

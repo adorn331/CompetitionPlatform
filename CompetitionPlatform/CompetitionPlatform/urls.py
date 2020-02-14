@@ -24,4 +24,5 @@ urlpatterns = [
     path(r'api/docs/', schema_view),
     path(r'api/demo/', include('apps.demo.urls')),
     path(r'authenz/', include('apps.authenz.urls')),
+    path(r'competition/', include('apps.competition.urls')),
 ]
