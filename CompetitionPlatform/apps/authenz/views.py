@@ -56,7 +56,7 @@ def user_login(request):
         if user is not None:
             login(request, user)  # 登录
             request.session['user'] = username  # 将session信息记录到浏览器
-            return redirect('/competition')
+            return redirect('/competition/list-admin')
         else:
             error = 'username or password error!'
             return render(request, 'authenz/login.html', locals())

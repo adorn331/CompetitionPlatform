@@ -19,6 +19,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='API docs')
 
+# todo home -> /competition/list-admin
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api/docs/', schema_view),
