@@ -23,7 +23,7 @@ schema_view = get_swagger_view(title='API docs')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api/docs/', schema_view),
-    path(r'api/demo/', include('apps.demo.urls')),
     path(r'authenz/', include('apps.authenz.urls')),
     path(r'competition/', include('apps.competition.urls')),
+    path(r'submission/', include('apps.submission.urls')),
 ]
