@@ -232,3 +232,5 @@ BROKER_URL = os.environ.get('BROKER_URL', 'pyamqp://guest:guest@rabbit//')
 LOGIN_URL = os.environ.get('LOGIN_URL', '/login')
 LOGIN_REDIRECT_URL = os.environ.get('LOGIN_URL', '/home')
 AUTH_USER_MODEL = 'authenz.User'
+
+COMPETITIIONPLATFORM_SITE_DOMAIN = os.environ.get('COMPETITIIONPLATFORM_SITE_DOMAIN', '127.0.0.1')

@@ -7,6 +7,10 @@ class Participant(models.Model):
     name = models.CharField(max_length=64)
     gender = models.BooleanField(blank=True, null=True)
 
+    def get_submission(self, competition):
+        from apps.submission.models import Submission
+        return Submission.objects.filter(participant=self, competition=competition).first()
+
     def __str__(self):
         return self.name
 

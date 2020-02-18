@@ -2,9 +2,9 @@ from apps.competition.models import Competition
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
-import traceback
-from django.core import serializers
 from django.contrib.auth.decorators import login_required
+import traceback
+from django.conf import settings
 
 
 def _get_file_and_prase():
@@ -66,6 +66,13 @@ def competition_list_submission(request):
 def competition_detail(request, id):
     user = request.user
     competition = Competition.objects.get(pk=id)
+    participants = competition.participants.all()
+
+    for p in participants:
+        p.submission = p.get_submission(competition)
+
+    domain = settings.COMPETITIIONPLATFORM_SITE_DOMAIN
+
     if not competition:
         return HttpResponse('404')  # todo
     return render(request, 'competition/detail.html', locals())
@@ -91,7 +98,7 @@ def competition_update(request, id):
     if request.method == 'POST':
         name = request.POST['name']
         description = request.POST['description']
-        competition.name =name
+        competition.name = name
         competition.description = description
         # todo finish the prase from file if exist.
         competition.save()

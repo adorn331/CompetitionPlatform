@@ -12,6 +12,7 @@
     <col width="200">
     <col>
   </colgroup>
+
   <thead>
     <tr>
       <th>参赛者考号</th>
@@ -20,20 +21,38 @@
       <th>操作</th>
     </tr>
   </thead>
+
   <tbody>
-  {% for p in competition.participants.all %}
+  {% for p in participants %}
     <tr>
+
     <td>{{ p.pid }}</td>
     <td>{{ p.name }}</td>
-    <td>todo 未提交</td>
-      <td>
-          <a href="" class="layui-btn layui-btn-xs">下载提交</a>
-          <a href="" class="layui-btn layui-btn-xs">手动上传</a>
-{#          <a href="" class="layui-btn layui-btn-radius  layui-btn-normal">下载提交</a>#}
-      </td>
+
+    {% if p.submission %}
+        <td>{{p.submission.status}}</td>
+    {% else %}
+        <td>未提交</td>
+    {% endif %}
+
+    <td>
+      {% if p.submission %}
+      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs">原始bundle</a>
+      <a href="http://{{ domain }}/media/{{ p.submission.filtered_bundle  }}" class="layui-btn layui-btn-xs">过滤后bundle</a>
+      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">手动上传</a>
+      {% else %}
+      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled">原始bundle</a>
+      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled">过滤后bundle</a>
+      <a href="" class="layui-btn layui-btn-xs">手动上传</a>
+      {% endif %}
+
+      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">提交详情预览</a>
+    </td>
+
     </tr>
   {% endfor %}
   </tbody>
+
 </table>
 
 
