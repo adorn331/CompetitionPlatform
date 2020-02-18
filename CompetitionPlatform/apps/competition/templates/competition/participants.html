@@ -1,0 +1,43 @@
+{% extends 'competition/base.html' %}
+
+{% block content %}
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend align="center">{{competition.name}}   参赛者管理</legend>
+</fieldset>
+
+<table class="layui-table" lay-size="sm">
+  <colgroup>
+    <col width="200">
+    <col width="120">
+    <col width="200">
+    <col>
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th>参赛者考号</th>
+      <th>姓名</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for p in participants %}
+    <tr>
+
+    <td>{{ p.pid }}</td>
+    <td>{{ p.name }}</td>
+
+
+    <td>
+      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">修改</a>
+      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">删除</a>
+    </td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+
+</table>
+
+{% endblock %}

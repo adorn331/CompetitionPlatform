@@ -37,13 +37,13 @@
 
     <td>
       {% if p.submission %}
-      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs">原始bundle</a>
-      <a href="http://{{ domain }}/media/{{ p.submission.filtered_bundle  }}" class="layui-btn layui-btn-xs">过滤后bundle</a>
-      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">手动上传</a>
+      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
+      <a href="http://{{ domain }}/media/{{ p.submission.filtered_bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
+      <button type="button" class="layui-btn layui-btn-primary layui-btn-xs layui-btn-disabled" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
       {% else %}
-      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled">原始bundle</a>
-      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled">过滤后bundle</a>
-      <a href="" class="layui-btn layui-btn-xs">手动上传</a>
+      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
+      <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
+      <button type="button" class="layui-btn layui-btn-primary layui-btn-xs" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
       {% endif %}
 
       <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">提交详情预览</a>
@@ -55,6 +55,28 @@
 
 </table>
 
+{% endblock %}
 
+{% block js %}
+<script>
+    layui.use('upload', function() {
+        var $ = layui.jquery
+            , upload = layui.upload, layer = layui.layer;
 
+        {% for p in participants %}
+        upload.render({ //允许上传的文件后缀
+            elem: '#upload{{ p.id }}'
+            , url: 'http://{{ domain }}/submission/create?pid={{ p.pid }}&cname={{competition.name}}'
+            , accept: 'file' //普通文件
+            , exts: 'zip|rar|7z|tar|tar.gz' //只允许上传压缩文件
+            , done: function (res) {
+                layer.msg('上传成功');
+                console.log(res);
+                location.reload();
+            }
+        });
+        {% endfor %}
+
+    });
+</script>
 {% endblock %}

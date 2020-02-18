@@ -47,7 +47,8 @@
 
   <div class="layui-body">
       <button type=button class="layui-btn layui-btn-xs layui-btn-primary" onClick="javascript:history.go(-1);">
-      << 返回上一页
+      <i class="layui-icon layui-icon-prev"></i>
+      返回
       </button>
       {% block content %}
       {% endblock %}
@@ -60,7 +61,7 @@
 
 
 </div>
-<script src="../../static/competition/js/layui.all.js"></script>
+<script src="../../static/competition/layui.all.js"></script>
 <script>
 //JavaScript代码区域
 layui.use('element', function(){
@@ -68,5 +69,8 @@ layui.use('element', function(){
 
 });
 </script>
+
+{% block js %}
+{% endblock %}
 </body>
 </html>

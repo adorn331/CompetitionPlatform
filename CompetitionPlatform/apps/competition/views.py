@@ -71,11 +71,25 @@ def competition_detail(request, id):
     for p in participants:
         p.submission = p.get_submission(competition)
 
+    # domain = settings.COMPETITIIONPLATFORM_SITE_DOMAIN
+    # # # todo change back!!!!!!
+    domain = '127.0.0.1'
+
+    if not competition:
+        return HttpResponse('<h1>404</h1>')  # todo
+    return render(request, 'competition/detail.html', locals())
+
+
+@login_required(login_url='/authenz/login')
+def competition_participants(request, id):
+    user = request.user
+    competition = Competition.objects.get(pk=id)
+    participants = competition.participants.all()
     domain = settings.COMPETITIIONPLATFORM_SITE_DOMAIN
 
     if not competition:
         return HttpResponse('404')  # todo
-    return render(request, 'competition/detail.html', locals())
+    return render(request, 'competition/participants.html', locals())
 
 
 @login_required(login_url='/authenz/login')
