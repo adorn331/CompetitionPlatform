@@ -6,7 +6,7 @@
   <legend align="center">比赛创建</legend>
 </fieldset>
 
-<form class="layui-form" method="post" action="/competition/create" enctype="multipart/form-data">
+<form class="layui-form" method="post" action="{% url 'competition_create' %}" enctype="multipart/form-data">
   <div class="layui-form-item">
     <label class="layui-form-label">比赛名</label>
     <div class="layui-input-block">

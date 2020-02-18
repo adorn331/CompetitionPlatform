@@ -28,9 +28,9 @@
     <td>{{ c.description }}</td>
     <td>{{ c.created_time }}</td>
       <td>
-          <a href="/competition/update/{{ c.id }}" class="layui-btn layui-btn-radius">信息修改</a>
-          <a href="/competition/participants/{{ c.id }}" class="layui-btn layui-btn-radius layui-btn-normal">人员管理</a>
-          <a href="/competition/delete/{{ c.id }}" class="layui-btn layui-btn-radius layui-btn-danger">删除</a>
+          <a href="{% url 'competition_update' c.id %}" class="layui-btn layui-btn-radius">信息修改</a>
+          <a href="{% url 'participant_list' c.id %}" class="layui-btn layui-btn-radius layui-btn-normal">人员管理</a>
+          <a href="{% url 'competition_delete' c.id %}" class="layui-btn layui-btn-radius layui-btn-danger">删除</a>
       </td>
     </tr>
   {% endfor %}

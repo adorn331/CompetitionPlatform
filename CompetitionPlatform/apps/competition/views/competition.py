@@ -81,19 +81,8 @@ def competition_detail(request, id):
 
 
 @login_required(login_url='/authenz/login')
-def competition_participants(request, id):
-    user = request.user
-    competition = Competition.objects.get(pk=id)
-    participants = competition.participants.all()
-    domain = settings.COMPETITIIONPLATFORM_SITE_DOMAIN
-
-    if not competition:
-        return HttpResponse('404')  # todo
-    return render(request, 'competition/participants.html', locals())
-
-
-@login_required(login_url='/authenz/login')
 def competition_delete(request, id):
+    print('11111')
     user = request.user
     # todo front end add del confirm.
     comp_instance = Competition.objects.get(pk=id)

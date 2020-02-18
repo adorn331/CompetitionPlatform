@@ -36,9 +36,9 @@
       <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
       <ul class="layui-nav layui-nav-tree"  lay-filter="test">
 
-        <li class="layui-nav-item"><a href="/competition/create">比赛创建</a></li>
+        <li class="layui-nav-item"><a href="{% url  'competition_create' %}">比赛创建</a></li>
         <li class="layui-nav-item"><a href="/competition/list-admin">比赛管理</a></li>
-        <li class="layui-nav-item"><a href="/competition/list-submission">参赛者提交管理</a></li>
+        <li class="layui-nav-item"><a href="{% url 'competition_list_submission' %}">参赛者提交管理</a></li>
         <li class="layui-nav-item"><a href="">提交结果统计分析</a></li>
 
       </ul>
