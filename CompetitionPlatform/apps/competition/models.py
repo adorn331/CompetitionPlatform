@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import JSONField
 
 
 class Participant(models.Model):
-    pid = models.CharField(max_length=64)
+    pid = models.CharField(max_length=64, unique=True)
     name = models.CharField(max_length=64)
     gender = models.BooleanField(blank=True, null=True)
 
@@ -19,7 +19,7 @@ class Participant(models.Model):
 
 
 class Competition(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     description = models.TextField(blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=True)
     submission_standard = JSONField()

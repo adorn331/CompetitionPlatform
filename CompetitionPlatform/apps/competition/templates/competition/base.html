@@ -20,12 +20,10 @@
             {{ user.username }}
         </a>
         <dl class="layui-nav-child">
-          <dd><a href="">修改密码</a></dd>
+{#          <dd><a href="">修改密码</a></dd>#}
           <dd><a href="/authenz/logout">注销</a></dd>
         </dl>
       </li>
-
-{#      <li class="layui-nav-item"><a href="/authenz/logout">注销</a></li>#}
 
     </ul>
 
@@ -35,11 +33,22 @@
     <div class="layui-side-scroll">
       <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
       <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">比赛维护</a>
+          <dl class="layui-nav-child">
+            <dd><a href="{% url  'competition_create' %}">创建新比赛</a></dd>
+            <dd><a href="/competition/list-admin">现有比赛管理</a></dd>
+          </dl>
+        </li>
 
-        <li class="layui-nav-item"><a href="{% url  'competition_create' %}">比赛创建</a></li>
-        <li class="layui-nav-item"><a href="/competition/list-admin">比赛管理</a></li>
-        <li class="layui-nav-item"><a href="{% url 'competition_list_submission' %}">参赛者提交管理</a></li>
-        <li class="layui-nav-item"><a href="">提交结果统计分析</a></li>
+      <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">选手提交结果收集&分析</a>
+          <dl class="layui-nav-child">
+            <dd><a href="{% url 'competition_list_submission' %}">提交结果管理</a></dd>
+            <dd><a href="{% url 'tmp' %}">出席&完成情况统计分析</a></dd>
+            <dd><a href="{% url 'tmp' %}">查重作弊情况统计分析</a></dd>
+          </dl>
+        </li>
 
       </ul>
     </div>

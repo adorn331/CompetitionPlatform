@@ -4,7 +4,10 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
   <legend align="center">{{competition.name}}   参赛者管理</legend>
 </fieldset>
-<button type="button" class="layui-btn layui-btn-primary" onclick="btnAction()">TEST CREATE</button>
+<div align="center">
+    <a href="{% url 'participant_create' competition.id %}" class="layui-btn layui-btn-xs">新增人员</a>
+</div>
+
 <table class="layui-table" lay-size="sm">
   <colgroup>
     <col width="200">
@@ -30,7 +33,7 @@
 
 
     <td>
-      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">修改</a>
+      <a href="{% url  'participant_update' competition.id p.id %}" class="layui-btn layui-btn-xs">修改</a>
       <a href="{% url 'participant_delete' competition.id p.id %}" class="layui-btn layui-btn-xs">删除</a>
     </td>
 
@@ -40,20 +43,4 @@
 
 </table>
 
-{% endblock %}
-
-
-{% block js %}
-<script>
-{#layer.msg('hello');#}
-{#$('#create1').on('click',function(){#}
-{#     layer.msg('create');#}
-{# });#}
-
-
-function btnAction() {
-    layer.msg('create');
-}
-
-</script>
 {% endblock %}

@@ -63,9 +63,9 @@ def competition_list_submission(request):
 
 
 @login_required(login_url='/authenz/login')
-def competition_detail(request, id):
+def competition_detail(request, cid):
     user = request.user
-    competition = Competition.objects.get(pk=id)
+    competition = Competition.objects.get(pk=cid)
     participants = competition.participants.all()
 
     for p in participants:
@@ -81,20 +81,20 @@ def competition_detail(request, id):
 
 
 @login_required(login_url='/authenz/login')
-def competition_delete(request, id):
+def competition_delete(request, cid):
     print('11111')
     user = request.user
     # todo front end add del confirm.
-    comp_instance = Competition.objects.get(pk=id)
+    comp_instance = Competition.objects.get(pk=cid)
     if comp_instance:
         comp_instance.delete()
     return redirect('/competition/list-admin')
 
 
 @login_required(login_url='/authenz/login')
-def competition_update(request, id):
+def competition_update(request, cid):
     user = request.user
-    competition = Competition.objects.get(pk=id)
+    competition = Competition.objects.get(pk=cid)
     if not competition:
         return HttpResponse('404')  # todo
 
