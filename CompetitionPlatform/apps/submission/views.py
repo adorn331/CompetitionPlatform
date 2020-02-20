@@ -37,7 +37,7 @@ def submission_create(request):
         filter_bundle = _get_filtered_stuff(bundle)
         submission.filtered_bundle = filter_bundle
         valid = _verify_bundle(filter_bundle)
-        submission.status = '合法' if valid else '不合法'
+        submission.status = '已提交且符合规范' if valid else '已提交但不符合规范'
         submission.save()
 
         return HttpResponse('200')  #todo

@@ -71,7 +71,7 @@ def competition_detail(request, cid):
     for p in participants:
         p.submission = p.get_submission(competition)
 
-    # domain = settings.COMPETITIIONPLATFORM_SITE_DOMAIN
+    # domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
     # # # todo change back!!!!!!
     domain = '127.0.0.1'
 

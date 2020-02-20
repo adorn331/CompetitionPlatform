@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "a-hidden-secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 PROJECT_APP_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(PROJECT_APP_DIR)
@@ -233,4 +233,4 @@ LOGIN_URL = os.environ.get('LOGIN_URL', '/login')
 LOGIN_REDIRECT_URL = os.environ.get('LOGIN_URL', '/home')
 AUTH_USER_MODEL = 'authenz.User'
 
-COMPETITIIONPLATFORM_SITE_DOMAIN = os.environ.get('COMPETITIIONPLATFORM_SITE_DOMAIN', '127.0.0.1')
+COMPETITIONPLATFORM_SITE_DOMAIN = os.environ.get('COMPETITIONPLATFORM_SITE_DOMAIN', '127.0.0.1')

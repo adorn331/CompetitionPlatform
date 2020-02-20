@@ -13,7 +13,7 @@ def participant_list(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
     participants = competition.participants.all()
-    domain = settings.COMPETITIIONPLATFORM_SITE_DOMAIN
+    domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 
     if not competition:
         return HttpResponse('404')  # todo
