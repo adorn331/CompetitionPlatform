@@ -4,7 +4,7 @@ from apps.competition.models import Participant, Competition
 
 @admin.register(Participant)
 class BenchmarkAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pid', 'name')
+    list_display = ('id', 'pno', 'name')
     ordering = ('id',)
 
 

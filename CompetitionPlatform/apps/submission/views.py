@@ -26,13 +26,13 @@ def submission_create(request):
         print(request.POST)
         print('*' * 10)
 
-        pid = request.GET['pid']
+        pno = request.GET['pno']
         cname = request.GET['cname']
         bundle = request.FILES['file']
 
         submission = Submission()
         submission.competition = Competition.objects.get(name=cname)
-        submission.participant = Participant.objects.get(pid=pid)
+        submission.participant = Participant.objects.get(pno=pno)
         submission.bundle = bundle
         filter_bundle = _get_filtered_stuff(bundle)
         submission.filtered_bundle = filter_bundle

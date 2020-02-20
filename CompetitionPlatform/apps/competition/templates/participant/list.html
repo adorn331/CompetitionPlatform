@@ -6,12 +6,17 @@
 </fieldset>
 <div align="center">
     <a href="{% url 'participant_create' competition.id %}" class="layui-btn layui-btn-xs">新增人员</a>
+    <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">导出csv</a>
 </div>
 
 <table class="layui-table" lay-size="sm">
   <colgroup>
-    <col width="200">
-    <col width="120">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
     <col width="200">
     <col>
   </colgroup>
@@ -20,6 +25,10 @@
     <tr>
       <th>参赛者考号</th>
       <th>姓名</th>
+      <th>省份</th>
+      <th>学校</th>
+      <th>年级</th>
+      <th>身份证号</th>
       <th>操作</th>
     </tr>
   </thead>
@@ -28,8 +37,12 @@
   {% for p in participants %}
     <tr>
 
-    <td>{{ p.pid }}</td>
+    <td>{{ p.pno }}</td>
     <td>{{ p.name }}</td>
+    <td>{{ p.province }}</td>
+    <td>{{ p.school }}</td>
+    <td>{{ p.grade }}</td>
+    <td>{{ p.id_num }}</td>
 
 
     <td>

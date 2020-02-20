@@ -30,6 +30,7 @@ def participant_delete(request, cid, pid):
         return HttpResponse('404')  # todo
 
     competition.participants.remove(participant)
+    participant.delete()  # todo need??
     return redirect(reverse('participant_list', args=(cid, )))
 
 
@@ -41,13 +42,19 @@ def participant_create(request, cid):
     if request.method == 'POST':
         try:
             name = request.POST['name']
-            pid = request.POST['pid']
-            gender = request.POST.get('gender')
+            pno = request.POST['pno']
+            province = request.POST['province']
+            school = request.POST['school']
+            grade = request.POST['grade']
+            id_num = request.POST['id_num']
 
             participant = Participant()
             participant.name = name
-            participant.pid = pid
-            participant.gender = gender
+            participant.pno = pno
+            participant.province = province
+            participant.school = school
+            participant.grade = grade
+            participant.id_num = id_num
             participant.save()
 
             competition.participants.add(participant)
@@ -73,11 +80,19 @@ def participant_update(request, cid, pid):
 
     if request.method == 'POST':
         name = request.POST['name']
-        pid = request.POST['pid']
-        gender = request.POST.get('gender')
+        pno = request.POST['pno']
+        province = request.POST['province']
+        school = request.POST['school']
+        grade = request.POST['grade']
+        id_num = request.POST['id_num']
+
         participant.name = name
-        participant.pid = pid
-        participant.gender = gender
+        participant.pno = pno
+        participant.province = province
+        participant.school = school
+        participant.grade = grade
+        participant.id_num = id_num
+
         participant.save()
         return redirect(reverse('participant_list', args=(cid, )))
 

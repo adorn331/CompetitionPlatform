@@ -3,9 +3,12 @@ from django.contrib.postgres.fields import JSONField
 
 
 class Participant(models.Model):
-    pid = models.CharField(max_length=64, unique=True)
     name = models.CharField(max_length=64)
-    gender = models.BooleanField(blank=True, null=True)
+    pno = models.CharField(max_length=64, unique=True)
+    province = models.CharField(max_length=32)
+    school = models.CharField(max_length=32)
+    grade = models.CharField(max_length=32)
+    id_num = models.CharField(max_length=32, unique=True)
 
     def get_submission(self, competition):
         from apps.submission.models import Submission
