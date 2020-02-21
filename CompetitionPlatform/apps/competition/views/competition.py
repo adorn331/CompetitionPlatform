@@ -7,11 +7,11 @@ import traceback
 from django.conf import settings
 import csv
 import codecs
+from apps.competition.utils import tempdir, get_dir_structure
+import zipfile
+import os
 
-
-def _get_file_and_prase():
-    # todo get post file and parse to json
-    return {'test': 'test'}
+from apps.competition.utils import parse_participants, parse_standard_from_bundle
 
 
 @login_required(login_url='/authenz/login')
@@ -21,50 +21,33 @@ def competition_create(request):
         try:
             name = request.POST['name']
             description = request.POST['description']
-
-            # todo finish the prase from file.
-            submission_standard = _get_file_and_prase()
-
-            print('*' * 10)
-            print(request.FILES.getlist('file'))
             file_list = request.FILES.getlist('file')
-            for i in file_list:
-                print(i.name)
-            print('*' * 10)
 
             # save basic info
             competition = Competition()
             competition.name = name
             competition.description = description
-            competition.submission_standard = submission_standard
-            competition.save()
+            competition.submission_standard = {}
+            cid = competition.save()
 
             # handle the files uploaded.
             for f in file_list:
+                # config participants from csv uploaded.
                 if f.name == 'namelist.csv':
-                    # parse participants
-                    reader = csv.reader(codecs.iterdecode(f, 'utf-8-sig'))  # todo the format need to test in windows
-                    for line in reader:
-                        participant = Participant()
-                        participant.pno = line[0]
-                        participant.province = line[1]
-                        participant.name = line[2]
-                        participant.id_num = line[3]
-                        participant.school = line[4]
-                        participant.grade = line[5]
-                        participant.save()
-                        competition.participants.add(participant)
+                    parse_participants(f, competition)
+
                 else:
                     # parse standard bundle
-                    pass
+                    submission_standard = parse_standard_from_bundle(f)
+                    competition.submission_standard = submission_standard
 
-
+            competition.save()
 
             return redirect('/competition/list-admin')
 
         except Exception as e:
             traceback.print_exc()
-            return HttpResponse('Internal error:', e)
+            return HttpResponse('Internal error:' + str(e))
     elif request.method == 'GET':
         return render(request, 'competition/create.html', locals())
 
@@ -109,7 +92,6 @@ def competition_detail(request, cid):
 
 @login_required(login_url='/authenz/login')
 def competition_delete(request, cid):
-    print('11111')
     user = request.user
     # todo front end add del confirm.
     comp_instance = Competition.objects.get(pk=cid)
@@ -128,9 +110,23 @@ def competition_update(request, cid):
     if request.method == 'POST':
         name = request.POST['name']
         description = request.POST['description']
+        file_list = request.FILES.getlist('file')
+
         competition.name = name
         competition.description = description
-        # todo finish the prase from file if exist.
+        competition.save()
+
+        # handle the files uploaded.
+        for f in file_list:
+            # config participants from csv uploaded.
+            if f.name == 'namelist.csv':
+                parse_participants(f, competition)
+
+            else:
+                # parse standard bundle
+                submission_standard = parse_standard_from_bundle(f)
+                competition.submission_standard = submission_standard
+
         competition.save()
         return redirect('/competition/list-admin')
 
