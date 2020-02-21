@@ -4,11 +4,11 @@ from django.contrib.postgres.fields import JSONField
 
 class Participant(models.Model):
     name = models.CharField(max_length=64)
-    pno = models.CharField(max_length=64, unique=True)
+    pno = models.CharField(max_length=64)
     province = models.CharField(max_length=32)
     school = models.CharField(max_length=32)
     grade = models.CharField(max_length=32)
-    id_num = models.CharField(max_length=32, unique=True)
+    id_num = models.CharField(max_length=32)
 
     def get_submission(self, competition):
         from apps.submission.models import Submission

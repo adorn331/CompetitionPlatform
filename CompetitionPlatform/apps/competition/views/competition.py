@@ -1,10 +1,12 @@
-from apps.competition.models import Competition
+from apps.competition.models import Competition, Participant
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import traceback
 from django.conf import settings
+import csv
+import codecs
 
 
 def _get_file_and_prase():
@@ -22,16 +24,41 @@ def competition_create(request):
 
             # todo finish the prase from file.
             submission_standard = _get_file_and_prase()
-            participants = _get_file_and_prase()
+
             print('*' * 10)
             print(request.FILES.getlist('file'))
+            file_list = request.FILES.getlist('file')
+            for i in file_list:
+                print(i.name)
             print('*' * 10)
 
+            # save basic info
             competition = Competition()
             competition.name = name
             competition.description = description
             competition.submission_standard = submission_standard
             competition.save()
+
+            # handle the files uploaded.
+            for f in file_list:
+                if f.name == 'namelist.csv':
+                    # parse participants
+                    reader = csv.reader(codecs.iterdecode(f, 'utf-8-sig'))  # todo the format need to test in windows
+                    for line in reader:
+                        participant = Participant()
+                        participant.pno = line[0]
+                        participant.province = line[1]
+                        participant.name = line[2]
+                        participant.id_num = line[3]
+                        participant.school = line[4]
+                        participant.grade = line[5]
+                        participant.save()
+                        competition.participants.add(participant)
+                else:
+                    # parse standard bundle
+                    pass
+
+
 
             return redirect('/competition/list-admin')
 
