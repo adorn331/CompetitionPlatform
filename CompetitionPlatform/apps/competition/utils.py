@@ -30,15 +30,58 @@ def tempdir():
         yield dirpath
 
 
+def flatten_dir_structure(d):
+    res = []
+
+    def reach_bottom(v):
+        return len(v.keys()) == 0 # substree is {}
+
+    def helper(d, prefix=''):
+        for k, v in d.items():
+            if reach_bottom(v):
+                res.append(os.path.join(prefix, k))
+            else:
+                helper(v, os.path.join(prefix, k))
+
+    helper(d)
+
+    return res
+
+
 def get_dir_structure(dir):
-    result = {}
+    result = {}     # todo bundle generate from the last path from dir?
     for item in os.listdir(dir):
+        if item == '__MACOSX' or item == '.DS_Store':
+            continue
         item_path = os.path.join(dir, item)
         if os.path.isdir(item_path):
             result[item] = get_dir_structure(item_path)
         else:
-            result[item] = item
+            result[item] = {}
     return result
+
+# def get_dir_structure(dir):
+#     result = {'bundle': {}}     # todo bundle generate from the last path from dir?
+#     for item in os.listdir(dir):
+#         if item == '__MACOSX':
+#             continue
+#         item_path = os.path.join(dir, item)
+#         if os.path.isdir(item_path):
+#             result['bundle'][item] = get_dir_structure(item_path)
+#         else:
+#             result['bundle'][item] = {}
+#     return result
+
+
+# def get_dir_structure(dir):
+#     result = {}
+#     for item in os.listdir(dir):
+#         item_path = os.path.join(dir, item)
+#         if os.path.isdir(item_path):
+#             result[item] = get_dir_structure(item_path)
+#         else:
+#             result[item] = item # todo should be null or {} p.s. representing it has no son.
+#     return result
 
 # def get_dir_structure(dir):
 #     result = []
@@ -75,16 +118,18 @@ def parse_participants(mem_csv_file, competition):
 
 
 def parse_standard_from_bundle(mem_bundle_file):
+    # save mem_bundle_file on disk
     with tempdir() as tmpdir:
-        bundle_zip_path = tmpdir + '/upload.zip'
+        bundle_zip_path = tmpdir + '/bundle.zip'
 
         with open(bundle_zip_path, 'wb+') as tmpbundle:
             for chunk in mem_bundle_file.chunks():
                 tmpbundle.write(chunk)
 
+        # extract them on disk
         zip_ref = zipfile.ZipFile(bundle_zip_path)
-
         bundle_path = tmpdir + '/bundle'
         zip_ref.extractall(path=bundle_path)
 
+        print(get_dir_structure(bundle_path))
         return get_dir_structure(bundle_path)

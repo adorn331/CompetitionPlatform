@@ -4,13 +4,6 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import traceback
-from django.conf import settings
-import csv
-import codecs
-from apps.competition.utils import tempdir, get_dir_structure
-import zipfile
-import os
-
 from apps.competition.utils import parse_participants, parse_standard_from_bundle
 
 
@@ -95,6 +88,7 @@ def competition_delete(request, cid):
     user = request.user
     # todo front end add del confirm.
     comp_instance = Competition.objects.get(pk=cid)
+    comp_instance.participants.all().delete()
     if comp_instance:
         comp_instance.delete()
     return redirect('/competition/list-admin')

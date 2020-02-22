@@ -1,30 +1,12 @@
-from apps.competition.models import Competition
 from django.http.response import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
-import traceback
 from apps.submission.models import Submission
 from apps.competition.models import Competition, Participant
-import random
-
-
-# todo
-def _get_filtered_stuff(origin_bundle):
-    return origin_bundle
-
-
-def _verify_bundle(bundle):
-    return random.choices([True, False])
+from apps.submission.utils import verify_bundle, get_filtered_bundle
 
 
 # todo 安全性？
 def submission_create(request):
     if request.method == "POST":
-        print('*' * 10)
-        print(request.GET)
-        print(request.POST)
-        print('*' * 10)
 
         pno = request.GET['pno']
         cname = request.GET['cname']
@@ -34,12 +16,15 @@ def submission_create(request):
         submission.competition = Competition.objects.get(name=cname)
         submission.participant = Participant.objects.get(pno=pno)
         submission.bundle = bundle
-        filter_bundle = _get_filtered_stuff(bundle)
-        submission.filtered_bundle = filter_bundle
-        valid = _verify_bundle(filter_bundle)
+
+        valid = verify_bundle(submission, bundle)
         submission.status = '已提交且符合规范' if valid else '已提交但不符合规范'
         submission.save()
 
-        return HttpResponse('200')  #todo
+        get_filtered_bundle(submission, bundle)
+
+        print(submission.bundle)
+        print(submission.filtered_bundle)
+        return HttpResponse('200', status=200)
     else:
-        return HttpResponse('404')  #todo
+        return HttpResponse('404 Not Found.', status=404)
