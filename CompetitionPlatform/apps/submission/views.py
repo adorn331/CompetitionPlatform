@@ -16,15 +16,13 @@ def submission_create(request):
         submission.competition = Competition.objects.get(name=cname)
         submission.participant = Participant.objects.get(pno=pno)
         submission.bundle = bundle
+        # submission.save()
 
-        valid = verify_bundle(submission, bundle)
-        submission.status = '已提交且符合规范' if valid else '已提交但不符合规范'
-        submission.save()
+        submission.valid = verify_bundle(submission, bundle)
+        # submission.save()
 
         get_filtered_bundle(submission, bundle)
 
-        print(submission.bundle)
-        print(submission.filtered_bundle)
         return HttpResponse('200', status=200)
     else:
         return HttpResponse('404 Not Found.', status=404)

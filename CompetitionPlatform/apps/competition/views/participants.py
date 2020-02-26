@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 import traceback
 from django.conf import settings
 from django.urls import reverse
+import csv
 
 
 @login_required(login_url='/authenz/login')
@@ -102,3 +103,19 @@ def participant_update(request, cid, pid):
 
 def tmp(request):
     return render(request, 'participant/tmp.html', locals())
+
+
+@login_required(login_url='/authenz/login')
+def get_participants_csv(request, cid):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="namelist.csv"'
+
+    writer = csv.writer(response)
+
+    # write all participants info to csv and return.
+    competition = Competition.objects.get(pk=cid)
+    for p in competition.participants.all():
+        writer.writerow([p.pno, p.province, p.name, p.id_num, p.school, p.grade])
+
+    return response

@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import traceback
 from apps.competition.utils import parse_participants, parse_standard_from_bundle
+import zipfile
 
 
 @login_required(login_url='/authenz/login')
@@ -30,6 +31,8 @@ def competition_create(request):
                     parse_participants(f, competition)
 
                 else:
+                    print('$$$$$$$$$$')
+                    print(zipfile.is_zipfile(f))
                     # parse standard bundle
                     submission_standard = parse_standard_from_bundle(f)
                     competition.submission_standard = submission_standard
@@ -73,6 +76,8 @@ def competition_detail(request, cid):
 
     for p in participants:
         p.submission = p.get_submission(competition)
+        if p.submission:
+            p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
 
     # domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
     # # # todo change back!!!!!!

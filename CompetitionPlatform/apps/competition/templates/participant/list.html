@@ -6,7 +6,7 @@
 </fieldset>
 <div align="center">
     <a href="{% url 'participant_create' competition.id %}" class="layui-btn layui-btn-xs">新增人员</a>
-    <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">导出csv</a>
+    <a href="{% url 'get_participants_csv' competition.id %}" class="layui-btn layui-btn-xs">导出csv</a>
 </div>
 
 <table class="layui-table" lay-size="sm">

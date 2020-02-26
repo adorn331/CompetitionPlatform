@@ -1,4 +1,4 @@
-from apps.competition.utils import tempdir, get_dir_structure, flatten_dir_structure
+from apps.competition.utils import tempdir, get_dir_structure, flatten_dir_structure, unflatten_dir_structure
 import zipfile, os, shutil
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
@@ -63,7 +63,7 @@ def get_filtered_bundle(submission, origin_bundle):
         # zip up the filtered dir
         make_zip(filtered_dir, 'filtered.zip')
 
-        # assign to the submission instance
+        # assign filtered_bundle to the submission instance
         with open(os.path.join(tmpdir, 'filtered.zip'), 'rb') as f:
             size = os.path.getsize(os.path.join(tmpdir, 'filtered.zip'))
             submission.filtered_bundle = InMemoryUploadedFile(f, origin_bundle.field_name, origin_bundle.name,
@@ -76,6 +76,8 @@ def get_filtered_bundle(submission, origin_bundle):
         return True
 
 
+# parse the bundle structure
+# check if the bundle structure match the standard, figure out the missing files
 def verify_bundle(submission, origin_bundle):
     print('[IN validate]', '--' * 50)
     # save origin_bundle to disk (in tmpdir)
@@ -101,15 +103,21 @@ def verify_bundle(submission, origin_bundle):
         # get origin_bundle structure: every item in standard should occur in uploaded bundle.
         bundle_structure = get_dir_structure(bundle_path)
         bundle_name = list(bundle_structure.keys())[0]
-        if not submission.participant.pno == bundle_name:   # upload dir name should be pno
-            return False
+        # if submission.participant.pno != bundle_name:   # upload dir name should be pno
+        #     return False
         bundle_files = flatten_dir_structure(bundle_structure[bundle_name])
         print('bundle: ', bundle_files)
 
+        missing_files = []
+        valid = True
         # start validation
-        print('[END validate]', '--' * 50)
         for file_path in standard_files:
             if file_path not in bundle_files:
-                return False
+                valid = False
+                missing_files.append(file_path)
 
-        return True
+        submission.bundle_structure = bundle_structure
+        submission.missing_files = unflatten_dir_structure(missing_files)
+        submission.save()
+        print('[END validate]', '--' * 50)
+        return valid

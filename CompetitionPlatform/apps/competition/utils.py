@@ -30,22 +30,35 @@ def tempdir():
         yield dirpath
 
 
-def flatten_dir_structure(d):
+def flatten_dir_structure(dictionary):
     res = []
 
     def reach_bottom(v):
         return len(v.keys()) == 0 # substree is {}
 
-    def helper(d, prefix=''):
-        for k, v in d.items():
+    def helper(dictionary, prefix=''):
+        for k, v in dictionary.items():
             if reach_bottom(v):
                 res.append(os.path.join(prefix, k))
             else:
                 helper(v, os.path.join(prefix, k))
 
-    helper(d)
+    helper(dictionary)
 
     return res
+
+
+def unflatten_dir_structure(flatten_list):
+    resultDict = dict()
+    for i in flatten_list:
+        parts = i.split(os.path.sep)
+        d = resultDict
+        for part in parts[:-1]:
+            if part not in d:
+                d[part] = dict()
+            d = d[part]
+        d[parts[-1]] = {}
+    return resultDict
 
 
 def get_dir_structure(dir):
