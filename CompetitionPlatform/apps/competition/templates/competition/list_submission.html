@@ -30,7 +30,7 @@
       <td>
 {#              <a href="" class="layui-btn layui-btn-radius">查看</a>#}
           <a href="{% url 'competition_detail' c.id %}" class="layui-btn layui-btn-radius">查看提交情况</a>
-          <a href="" class="layui-btn layui-btn-radius  layui-btn-normal">打包下载所有提交</a>
+          <a href="{% url 'submission_download_all' c.id %}" class="layui-btn layui-btn-radius  layui-btn-normal">打包下载所有提交</a>
       </td>
     </tr>
   {% endfor %}

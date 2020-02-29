@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 import traceback
 from apps.competition.utils import parse_participants, parse_standard_from_bundle
 import zipfile
+from apps.submission.utils import flatten_dir_structure
 
 
 @login_required(login_url='/authenz/login')
@@ -78,6 +79,17 @@ def competition_detail(request, cid):
         p.submission = p.get_submission(competition)
         if p.submission:
             p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
+            p.display_bundle = '已提交文件<br>'
+            if p.submission.bundle_structure:
+                file_list = flatten_dir_structure(p.submission.bundle_structure)
+                for i in file_list:
+                    p.display_bundle = p.display_bundle + i + '<br>'
+
+            if p.submission.missing_files:
+                p.display_missing = '<br>缺失文件<br>'
+                file_list = flatten_dir_structure(p.submission.missing_files)
+                for i in file_list:
+                    p.display_missing = p.display_missing + i + '<br>'
 
     # domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
     # # # todo change back!!!!!!

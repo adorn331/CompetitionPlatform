@@ -39,14 +39,17 @@
       {% if p.submission %}
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
       <a href="http://{{ domain }}/media/{{ p.submission.filtered_bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
+      <button id="layerDemo{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs">提交详情预览</button>
       <button type="button" class="layui-btn layui-btn-primary layui-btn-xs layui-btn-disabled" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
       {% else %}
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
+      <button id="layerDemo{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs layui-btn-disabled">提交详情预览</button>
       <button type="button" class="layui-btn layui-btn-primary layui-btn-xs" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
       {% endif %}
 
-      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled">提交详情预览</a>
+{#      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled" >提交详情预览</a>#}
+{#    <button data-method="confirmTrans" class="layui-btn" id="layerDemo{{ p.id }}">配置一个透明的询问框</button>#}
     </td>
 
     </tr>
@@ -78,5 +81,53 @@
         {% endfor %}
 
     });
+
+    function btn(){
+        layer.msg('hello');
+    }
+
+
+layui.use('layer', function(){ //独立版的layer无需执行这一句
+  var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+  //触发事件
+  var active = {
+
+    offset: function(othis, bundle, missing){
+      var type = othis.data('type')
+      ,text = othis.text();
+
+      layer.open({
+        type: 1
+        ,offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+        ,id: 'layerDemo'+type //防止重复弹出
+        ,content: '<div style="padding: 20px 100px;">'+ bundle + missing +'</div>'
+        ,btn: '关闭全部'
+        ,btnAlign: 'c' //按钮居中
+        ,shade: 0 //不显示遮罩
+        ,yes: function(){
+          layer.closeAll();
+        }
+      });
+    }
+
+      ,confirmTrans: function(){
+      //配置一个透明的询问框
+      layer.msg('大部分参数都是可以公用的<br>合理搭配，展示不一样的风格', {
+        time: 20000, //20s后自动关闭
+        btn: ['明白了', '知道了', '哦']
+      });
+    }
+  };
+
+
+  {% for p in participants %}
+  $('#layerDemo{{ p.id }}').on('click', function(){
+    var othis = $(this), method = othis.data('method');
+    active[method] ? active[method].call(this, othis, '{{ p.display_bundle | safe }}', '{{ p.display_missing | safe }}') : '';
+  });
+  {% endfor %}
+
+});
 </script>
 {% endblock %}
