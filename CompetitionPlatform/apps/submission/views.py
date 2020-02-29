@@ -1,7 +1,7 @@
 from django.http.response import HttpResponse
 from apps.submission.models import Submission
 from apps.competition.models import Competition, Participant
-from apps.submission.utils import verify_bundle, get_filtered_bundle
+from apps.submission.utils import verify_bundle, get_filtered_bundle, get_file_md5
 from io import BytesIO
 import os
 import zipfile
@@ -15,6 +15,12 @@ def submission_create(request):
         pno = request.GET['pno']
         cname = request.GET['cname']
         bundle = request.FILES['file']
+
+        # ensure the transfer correctly
+        client_md5 = request.GET.get('md5', '')
+        if client_md5:
+            if get_file_md5(bundle) != client_md5:
+                return HttpResponse('MD5 not match!', status=400)
 
         submission = Submission()
         submission.competition = Competition.objects.get(name=cname)

@@ -1,6 +1,19 @@
 from apps.competition.utils import tempdir, get_dir_structure, flatten_dir_structure, unflatten_dir_structure
 import zipfile, os, shutil
 from django.core.files.uploadedfile import InMemoryUploadedFile
+import hashlib
+
+
+def get_file_md5(file):
+    """
+    :param file: file-like object
+    :return: md5 of file
+    """
+    md5obj = hashlib.md5()
+    md5obj.update(file.read())
+    file.seek(0)
+    _hash = md5obj.hexdigest()
+    return str(_hash).upper()
 
 
 # zip up a dir
