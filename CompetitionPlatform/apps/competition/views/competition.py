@@ -66,6 +66,11 @@ def competition_list_submission(request):
         # todo 分页
         username = request.user.username
         competition_list = Competition.objects.all().order_by('-created_time')
+
+        # domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
+        # # # todo change back!!!!!!
+        domain = '127.0.0.1'
+
         return render(request, 'competition/list_submission.html', locals())
 
 

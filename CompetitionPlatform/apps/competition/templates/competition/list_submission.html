@@ -29,8 +29,9 @@
     <td>{{ c.created_time }}</td>
       <td>
 {#              <a href="" class="layui-btn layui-btn-radius">查看</a>#}
-          <a href="{% url 'competition_detail' c.id %}" class="layui-btn layui-btn-radius">查看提交情况</a>
-          <a href="{% url 'submission_download_all' c.id %}" class="layui-btn layui-btn-radius  layui-btn-normal">打包下载所有提交</a>
+          <a href="{% url 'competition_detail' c.id %}" class="layui-btn layui-btn-radius">提交详情</a>
+          <a href="{% url 'download_all_submission' c.id %}" class="layui-btn layui-btn-radius  layui-btn-normal"><i class="layui-icon layui-icon-download-circle"></i>所有提交</a>
+          <button type="button" class="layui-btn layui-btn-radius  layui-btn-normal" id="upload{{ c.id }}"><i class="layui-icon layui-icon-upload"></i>比对收集</button>
       </td>
     </tr>
   {% endfor %}
@@ -39,4 +40,41 @@
 
 
 
+{% endblock %}
+
+
+{% block js %}
+<script>
+
+layui.use('upload', function() {
+    var $ = layui.jquery
+        , upload = layui.upload, layer = layui.layer;
+
+    {% for c in competition_list %}
+    upload.render({ //允许上传的文件后缀
+        elem: '#upload{{ c.id }}'
+        , url: 'http://{{ domain }}/submission/compare-{{c.id}}-submissions'
+        , accept: 'file' //普通文件
+        , exts: 'zip|rar|7z|tar|tar.gz' //只允许上传压缩文件
+        , done: function (res) {
+            layer.open({
+              type: 1,
+              offset: 'auto',
+              skin: 'layui-layer-molv', //加上边框
+              title: ['比对结果', 'font-size:18px;'],
+              area: ['620px', '440px'], //宽高
+              content: '<div style="padding: 20px 150px;">'+ res.msg +'</div>'
+            });
+            console.log(res);
+        }
+    });
+    {% endfor %}
+
+});
+
+function btn(){
+    layer.msg('hello');
+}
+
+</script>
 {% endblock %}
