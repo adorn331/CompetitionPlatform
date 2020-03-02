@@ -7,6 +7,7 @@ import traceback
 from apps.competition.utils import parse_participants, parse_standard_from_bundle
 import zipfile
 from apps.submission.utils import flatten_dir_structure
+from apps.submission.models import Submission
 
 
 @login_required(login_url='/authenz/login')
@@ -81,7 +82,7 @@ def competition_detail(request, cid):
     participants = competition.participants.all()
 
     for p in participants:
-        p.submission = p.get_submission(competition)
+        p.submission = Submission.objects.filter(participant=p).first()
         if p.submission:
             p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
             p.display_bundle = '已提交文件<br>'
@@ -110,7 +111,6 @@ def competition_delete(request, cid):
     user = request.user
     # todo front end add del confirm.
     comp_instance = Competition.objects.get(pk=cid)
-    comp_instance.participants.all().delete()
     if comp_instance:
         comp_instance.delete()
     return redirect('/competition/list-admin')
@@ -136,6 +136,7 @@ def competition_update(request, cid):
         for f in file_list:
             # config participants from csv uploaded.
             if f.name == 'namelist.csv':
+                Participant.objects.filter(competition=competition).delete()
                 parse_participants(f, competition)
 
             else:

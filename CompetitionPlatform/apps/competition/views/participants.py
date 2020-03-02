@@ -24,14 +24,12 @@ def participant_list(request, cid):
 @login_required(login_url='/authenz/login')
 def participant_delete(request, cid, pid):
     user = request.user
-    competition = Competition.objects.get(pk=cid)
     participant = Participant.objects.get(pk=pid)
 
-    if not competition or not participant:
+    if  not participant:
         return HttpResponse('404')  # todo
 
-    competition.participants.remove(participant)
-    participant.delete()  # todo need??
+    participant.delete()
     return redirect(reverse('participant_list', args=(cid, )))
 
 
@@ -56,9 +54,8 @@ def participant_create(request, cid):
             participant.school = school
             participant.grade = grade
             participant.id_num = id_num
+            participant.competition = competition
             participant.save()
-
-            competition.participants.add(participant)
 
             return redirect(reverse('participant_list', args=(cid, )))
 

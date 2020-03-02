@@ -46,7 +46,7 @@ def get_filtered_bundle(submission, origin_bundle):
         zip_ref.extractall(path=origin_dir)
 
         # get standard structure
-        standard_structure = submission.competition.submission_standard
+        standard_structure = submission.participant.competition.submission_standard
         standard_bundle_name = list(standard_structure.keys())[0]
         standard_files = flatten_dir_structure(standard_structure[standard_bundle_name])
         print('standard: ', standard_files)
@@ -73,8 +73,8 @@ def get_filtered_bundle(submission, origin_bundle):
                 # copy file
                 shutil.copy2(src, dest)
 
-        # zip up the filtered dir
-        make_zip(filtered_dir, 'filtered.zip')
+        # zip up the filtered bundle in filtered dir
+        make_zip(os.listdir(filtered_dir)[0], 'filtered.zip')
 
         # assign filtered_bundle to the submission instance
         with open(os.path.join(tmpdir, 'filtered.zip'), 'rb') as f:
@@ -108,7 +108,7 @@ def verify_bundle(submission, origin_bundle):
         zip_ref.extractall(path=bundle_path)
 
         # get standard structure
-        standard_structure = submission.competition.submission_standard
+        standard_structure = submission.participant.competition.submission_standard
         standard_bundle_name = list(standard_structure.keys())[0]
         standard_files = flatten_dir_structure(standard_structure[standard_bundle_name])
         print('standard: ', standard_files)

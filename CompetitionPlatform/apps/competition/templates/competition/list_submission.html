@@ -28,7 +28,6 @@
     <td>{{ c.description }}</td>
     <td>{{ c.created_time }}</td>
       <td>
-{#              <a href="" class="layui-btn layui-btn-radius">查看</a>#}
           <a href="{% url 'competition_detail' c.id %}" class="layui-btn layui-btn-radius">提交详情</a>
           <a href="{% url 'download_all_submission' c.id %}" class="layui-btn layui-btn-radius  layui-btn-normal"><i class="layui-icon layui-icon-download-circle"></i>所有提交</a>
           <button type="button" class="layui-btn layui-btn-radius  layui-btn-normal" id="upload{{ c.id }}"><i class="layui-icon layui-icon-upload"></i>比对收集</button>

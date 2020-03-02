@@ -26,8 +26,7 @@ def submission_create(request):
                 return HttpResponse('MD5 not match!', status=400)
 
         submission = Submission()
-        submission.competition = Competition.objects.get(name=cname)
-        submission.participant = Participant.objects.get(pno=pno)
+        submission.participant = Participant.objects.get(pno=pno, competition__name=cname)
         submission.bundle = bundle
         # submission.save()
 
@@ -47,7 +46,7 @@ def download_all_submission(request, cid):
     # Files (local path) to put in the .zip
     submission_list = []
     for p in competition.participants.all():
-        submission = Submission.objects.filter(competition=competition, participant=p).first()
+        submission = Submission.objects.filter(participant=p).first()
         if submission:
             print(submission.bundle.path)
             submission_list.append(submission.bundle.path)
@@ -85,68 +84,73 @@ def download_all_submission(request, cid):
 def compare_submission(request, cid):
     msg = ''
 
-    competition = Competition.objects.get(pk=cid)
-    bundle = request.FILES['file']
-    with tempdir() as tmpdir:
-        # save it and extract
-        bundle_zip_path = tmpdir + '/bundle.zip'
+    try:
+        competition = Competition.objects.get(pk=cid)
+        bundle = request.FILES['file']
+        with tempdir() as tmpdir:
+            # save it and extract
+            bundle_zip_path = tmpdir + '/bundle.zip'
 
-        with open(bundle_zip_path, 'wb+') as tmpbundle:
-            for chunk in bundle.chunks():
-                tmpbundle.write(chunk)
+            with open(bundle_zip_path, 'wb+') as tmpbundle:
+                for chunk in bundle.chunks():
+                    tmpbundle.write(chunk)
 
-        zip_ref = zipfile.ZipFile(bundle_zip_path)
+            zip_ref = zipfile.ZipFile(bundle_zip_path)
 
-        # extract the uploaded bundle
-        zip_ref.extractall()
-        # remove the zip bundle
-        os.remove(bundle_zip_path)
-        # then leave the unzipped dir as uploaded_dir
-        uploaded_dir = os.path.join(tmpdir, os.listdir(tmpdir)[0]) # 这样代表是一个文件夹压缩过来的，例如answers
+            # extract the uploaded bundle
+            zip_ref.extractall()
+            # remove the zip bundle
+            os.remove(bundle_zip_path)
+            # then leave the unzipped dir as uploaded_dir
+            uploaded_dir = os.path.join(tmpdir, os.listdir(tmpdir)[0]) # 这样代表是一个文件夹压缩过来的，例如answers
 
-        # extract every sub zip bundle
-        print(os.listdir(uploaded_dir))
-        for item in os.listdir(uploaded_dir):
-            submission_zip_path = os.path.join(uploaded_dir, item)
-            zip_ref = zipfile.ZipFile(submission_zip_path)
-            zip_ref.extractall(path=uploaded_dir)
-            os.remove(submission_zip_path)
-        print(os.listdir(uploaded_dir))
+            # extract every sub zip bundle
+            for item in os.listdir(uploaded_dir):
+                submission_zip_path = os.path.join(uploaded_dir, item)
+                zip_ref = zipfile.ZipFile(submission_zip_path)
+                zip_ref.extractall(path=uploaded_dir)
+                os.remove(submission_zip_path)
 
-        # unzip each submission from client to collected_dir
-        collected_dir = os.path.join(tmpdir, 'collected')
-        os.makedirs(collected_dir, exist_ok=True)
-        for p in competition.participants.all():
-            submission = Submission.objects.filter(competition=competition, participant=p).first()
-            if submission:
-                zip_ref = zipfile.ZipFile(submission.bundle.path)
-                zip_ref.extractall(path=collected_dir)
-        print(os.listdir(tmpdir))
-        print(os.listdir(collected_dir))
+            # unzip each submission from client to collected_dir
+            collected_dir = os.path.join(tmpdir, 'collected')
+            os.makedirs(collected_dir, exist_ok=True)
+            for p in competition.participants.all():
+                submission = Submission.objects.filter(participant=p).first()
+                if submission:
+                    zip_ref = zipfile.ZipFile(submission.bundle.path)
+                    zip_ref.extractall(path=collected_dir)
 
-        # star compare and get the result
-        print('@@@@@@@@@@@@@@@@@')
-        uploaded_set = set(flatten_dir_structure(get_dir_structure(uploaded_dir)))
-        collected_set = set(flatten_dir_structure(get_dir_structure(collected_dir)))
+            # star compare and get the result
+            print('@@@@@@@@@@@@@@@@@')
+            uploaded_set = set(flatten_dir_structure(get_dir_structure(uploaded_dir)))
+            collected_set = set(flatten_dir_structure(get_dir_structure(collected_dir)))
 
-        diff_set1 = uploaded_set.difference(collected_set)
-        if len(diff_set1) > 0:
-            msg += '<br>' + '手工收集到而服务器未收集到的文件有:' + '<br>' * 2
-            for i in diff_set1:
-                msg += '&emsp;' * 2 + i + '<br>'
+            diff_set1 = uploaded_set.difference(collected_set)
+            if len(diff_set1) > 0:
+                msg += '<br>' + '手工收集到而服务器未收集到的文件有:' + '<br>' * 2
+                for i in sorted(diff_set1):
+                    msg += '&emsp;' * 2 + i + '<br>'
 
-        diff_set2 = collected_set.difference(uploaded_set)
-        if len(diff_set2) > 0:
-            msg += '<br>' + '服务器收集到而手工未收集到的文件有:' + '<br>' * 2
-            for i in diff_set2:
-                msg += '&emsp;' * 2 + i + '<br>'
+            diff_set2 = collected_set.difference(uploaded_set)
+            if len(diff_set2) > 0:
+                msg += '<br>' + '服务器收集到而手工未收集到的文件有:' + '<br>' * 2
+                for i in sorted(diff_set2):
+                    msg += '&emsp;' * 2 + i + '<br>'
+
+            if len(diff_set1) == 0 and len(diff_set2) == 0:
+                msg += '<br>' * 8 + '手工收集的提交和服务器收集到的提交相同！'
+
             print('@@@@@@@@@@@@@@@@@')
 
-        if len(diff_set1) == 0 and len(diff_set2) == 0:
-            msg += '<br>' * 8 + '手工收集的提交和服务器收集到的提交相同！'
-
-    resp = {
-        'code': '200',
-        'msg': msg
-    }
-    return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
+        resp = {
+            'code': '200',
+            'msg': msg
+        }
+        return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
+    except Exception:
+        msg = '<br>' * 8 + '接口异常，请检查是否所有选手提交都放置一个文件夹内再压缩上传！'
+        resp = {
+            'code': '200',
+            'msg': msg
+        }
+        return HttpResponse(json.dumps(resp), content_type="application/json", status=200)

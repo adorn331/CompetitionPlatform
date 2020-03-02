@@ -126,8 +126,8 @@ def parse_participants(mem_csv_file, competition):
                 participant.id_num = line[3]
                 participant.school = line[4]
                 participant.grade = line[5]
+                participant.competition = competition
                 participant.save()
-                competition.participants.add(participant)
 
 
 def parse_standard_from_bundle(mem_bundle_file):
