@@ -18,7 +18,14 @@
                         <div class="field">
                             <input type="password" name="password" placeholder="password"><br>
                         </div>
-                        <div style="color: red">{{ error }}</div><br>
+
+                        {% if msg %}
+                            <div style="color: green">{{ msg }}</div><br>
+                        {% endif %}
+                        {% if error %}
+                            <div style="color: red">{{ error }}</div><br>
+                        {% endif %}
+
                         <button class="ui fluid large teal button" type="submit">登陆</button>
                     </form>
                     <div class="ui message">

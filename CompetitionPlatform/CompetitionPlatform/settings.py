@@ -233,4 +233,16 @@ LOGIN_URL = os.environ.get('LOGIN_URL', '/login')
 LOGIN_REDIRECT_URL = os.environ.get('LOGIN_URL', '/home')
 AUTH_USER_MODEL = 'authenz.User'
 
+
+# =========================================================================
+# Email
+# =========================================================================
 COMPETITIONPLATFORM_SITE_DOMAIN = os.environ.get('COMPETITIONPLATFORM_SITE_DOMAIN', '127.0.0.1')
+
+NEED_EMAIL_VALIDATION = os.environ.get('NEED_EMAIL_VALIDATION', 'True')
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.163.com')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'adorn331@163.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'Codalab2019')
+DEFAULT_FROM_EMAIL = 'adorn331@163.com'

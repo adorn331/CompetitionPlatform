@@ -20,6 +20,8 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
 
+pip install -r /app/CompetitionPlatform/requirements/requirements.txt
+
 
 # Automatically create superuser when start
 USER="admin" 
