@@ -27,4 +27,5 @@ urlpatterns = [
     path(r'competition/', include('apps.competition.urls')),
     path(r'submission/', include('apps.submission.urls')),
     path(r'statistics/', include('apps.statistics.urls')),
+    path(r'detector/', include('apps.detector.urls')),
 ]

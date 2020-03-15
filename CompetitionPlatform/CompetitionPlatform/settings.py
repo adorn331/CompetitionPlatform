@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.competition',
     'apps.submission',
     'apps.statistics',
+    'apps.detector',
     'rest_framework',
     'rest_framework_swagger',
 ]

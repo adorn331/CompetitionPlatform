@@ -81,61 +81,61 @@ services:
         max-size: "200k"
     container_name: django
 
-  # # --------------------------------------------------------------------------
-  # # Message queue: can work, for later use.
-  # # --------------------------------------------------------------------------
-  # rabbit:
-  #   build:
-  #     # Custom Dockerfile for rabbit mostly to make building faster because
-  #     # of envsubst dependency
-  #     context: .
-  #     dockerfile: docker/rabbitmq/Dockerfile
-  #   restart: unless-stopped
-  #   hostname: rabbit
-  #   command: bash -x /app/docker/run_rabbitmq.sh
-  #   environment:
-  #     - RABBITMQ_LOGS=/var/log/rabbitmq/output.log
-  #     - RABBITMQ_SASL_LOGS=/var/log/rabbitmq/output_sasl.log
-  #   env_file: .env
-  #   volumes:
-  #     - ./docker:/app/docker
-  #     - ./certs:/app/certs
-  #     - ${LOGGING_DIR}/rabbitmq:/var/log/rabbitmq
-  #     - ./var/data/rabbitmq/:/var/lib/rabbitmq/mnesia
-  #   ports:
-  #     - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
-  #     - ${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}
-  #   logging:
-  #     options:
-  #       max-size: "200k"
-  #   container_name: rabbit
+  # --------------------------------------------------------------------------
+  # Message queue: can work, for later use.
+  # --------------------------------------------------------------------------
+  rabbit:
+    build:
+      # Custom Dockerfile for rabbit mostly to make building faster because
+      # of envsubst dependency
+      context: .
+      dockerfile: docker/rabbitmq/Dockerfile
+    restart: unless-stopped
+    hostname: rabbit
+    command: bash -x /app/docker/run_rabbitmq.sh
+    environment:
+      - RABBITMQ_LOGS=/var/log/rabbitmq/output.log
+      - RABBITMQ_SASL_LOGS=/var/log/rabbitmq/output_sasl.log
+    env_file: .env
+    volumes:
+      - ./docker:/app/docker
+      - ./certs:/app/certs
+      - ${LOGGING_DIR}/rabbitmq:/var/log/rabbitmq
+      - ./var/data/rabbitmq/:/var/lib/rabbitmq/mnesia
+    ports:
+      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+      - ${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}
+    logging:
+      options:
+        max-size: "200k"
+    container_name: rabbit
 
-  # # --------------------------------------------------------------------------
-  # # Celery Workers: can work, for later use.
-  # # --------------------------------------------------------------------------
-  # worker_site:
-  #   build:
-  #     context: .
-  #     dockerfile: docker/django/Dockerfile
-  #   restart: unless-stopped
-  #   command: sh /app/docker/run_site.sh
-  #   volumes:
-  #     - ./CompetitionPlatform:/app/CompetitionPlatform
-  #     - ./docker:/app/docker
-  #     - ./certs:/app/certs
-  #     - ${LOGGING_DIR}/worker_site:/var/log/
-  #   environment:
-  #     # Stop memory leaks
-  #     - REQUESTS_CA_BUNDLE=/usr/local/lib/python3.7/site-packages/certifi/cacert.pem
-  #     - DEBUG=False
-  #   env_file: .env
-  #   links:
-  #     - postgres
-  #     - rabbit
-  #   logging:
-  #     options:
-  #       max-size: "200k"
-  #   container_name: worker_site
+  # --------------------------------------------------------------------------
+  # Celery Workers: can work, for later use.
+  # --------------------------------------------------------------------------
+  worker_site:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    restart: unless-stopped
+    command: sh /app/docker/run_site.sh
+    volumes:
+      - ./CompetitionPlatform:/app/CompetitionPlatform
+      - ./docker:/app/docker
+      - ./certs:/app/certs
+      - ${LOGGING_DIR}/worker_site:/var/log/
+    environment:
+      # Stop memory leaks
+      - REQUESTS_CA_BUNDLE=/usr/local/lib/python3.7/site-packages/certifi/cacert.pem
+      - DEBUG=False
+    env_file: .env
+    links:
+      - postgres
+      - rabbit
+    logging:
+      options:
+        max-size: "200k"
+    container_name: worker_site
 
   # worker_compute:
   #   build:
