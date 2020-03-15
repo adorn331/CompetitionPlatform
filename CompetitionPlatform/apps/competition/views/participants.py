@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 import traceback
 from django.conf import settings
 from django.urls import reverse
-import csv
+import csv, codecs
 
 
 @login_required(login_url='/authenz/login')
@@ -107,7 +107,7 @@ def get_participants_csv(request, cid):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="namelist.csv"'
-
+    response.write(codecs.BOM_UTF8)  # todo figure out why?
     writer = csv.writer(response)
 
     # write all participants info to csv and return.

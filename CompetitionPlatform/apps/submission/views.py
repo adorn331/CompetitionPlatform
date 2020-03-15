@@ -81,7 +81,7 @@ def download_all_submission(request, cid):
     return resp
 
 
-def compare_submission(request, cid):
+def compare_to_manual_collected(request, cid):
     msg = ''
 
     try:

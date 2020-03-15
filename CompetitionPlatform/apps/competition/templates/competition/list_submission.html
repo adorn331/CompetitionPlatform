@@ -52,7 +52,7 @@ layui.use('upload', function() {
     {% for c in competition_list %}
     upload.render({ //允许上传的文件后缀
         elem: '#upload{{ c.id }}'
-        , url: 'http://{{ domain }}/submission/compare-{{c.id}}-submissions'
+        , url: 'http://{{ domain }}/submission/compare-to-manual-collected-submissions-{{ c.id }}'
         , accept: 'file' //普通文件
         , exts: 'zip|rar|7z|tar|tar.gz' //只允许上传压缩文件
         , done: function (res) {
