@@ -1,0 +1,51 @@
+{% extends 'competition/base.html' %}
+
+{% block content %}
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend align="center">{{competition.name}}   完成度统计</legend>
+</fieldset>
+<div align="center">
+    <a href="{% url 'get_participants_csv' competition.id %}" class="layui-btn layui-btn-xs">导出csv</a>
+</div>
+
+<table class="layui-table" lay-size="sm">
+  <colgroup>
+    <col width="200">
+    <col width="120">
+    <col width="200">
+    <col>
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th>参赛者考号</th>
+      <th>姓名</th>
+      <th>状态</th>
+      <th>未完成</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for p in participants %}
+    <tr>
+
+    <td>{{ p.pno }}</td>
+    <td>{{ p.name }}</td>
+
+    {% if p.submission %}
+        <td>{{p.submission.status}}</td>
+    {% else %}
+        <td>未提交</td>
+    {% endif %}
+
+    <td>
+        {{ p.display_missing }}
+    </td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+
+</table>
+
+{% endblock %}

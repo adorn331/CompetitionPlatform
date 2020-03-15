@@ -1,0 +1,105 @@
+{% extends 'competition/base.html' %}
+
+{% block content %}
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend align="center">{{competition.name}}   缺勤选手</legend>
+</fieldset>
+<div align="center">
+    <a href="{% url 'get_participants_csv' competition.id %}" class="layui-btn layui-btn-xs">导出csv</a>
+</div>
+
+<table class="layui-table" lay-size="sm">
+  <colgroup>
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="200">
+    <col>
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th>参赛者考号</th>
+      <th>姓名</th>
+      <th>省份</th>
+      <th>学校</th>
+      <th>年级</th>
+      <th>身份证号</th>
+{#      <th>操作</th>#}
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for p in unattended_participants %}
+    <tr>
+
+    <td>{{ p.pno }}</td>
+    <td>{{ p.name }}</td>
+    <td>{{ p.province }}</td>
+    <td>{{ p.school }}</td>
+    <td>{{ p.grade }}</td>
+    <td>{{ p.id_num }}</td>
+
+{##}
+{#    <td>#}
+{#      <a href="{% url  'participant_update' competition.id p.id %}" class="layui-btn layui-btn-xs">修改</a>#}
+{#      <a href="{% url 'participant_delete' competition.id p.id %}" class="layui-btn layui-btn-xs">删除</a>#}
+{#    </td>#}
+
+    </tr>
+  {% endfor %}
+  </tbody>
+
+</table>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend align="center">{{competition.name}}   出席选手</legend>
+</fieldset>
+<div align="center">
+    <a href="{% url 'get_participants_csv' competition.id %}" class="layui-btn layui-btn-xs">导出csv</a>
+</div>
+
+<table class="layui-table" lay-size="sm">
+  <colgroup>
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="200">
+    <col>
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th>参赛者考号</th>
+      <th>姓名</th>
+      <th>省份</th>
+      <th>学校</th>
+      <th>年级</th>
+      <th>身份证号</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for p in attended_participants %}
+    <tr>
+
+    <td>{{ p.pno }}</td>
+    <td>{{ p.name }}</td>
+    <td>{{ p.province }}</td>
+    <td>{{ p.school }}</td>
+    <td>{{ p.grade }}</td>
+    <td>{{ p.id_num }}</td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+
+</table>
+
+{% endblock %}

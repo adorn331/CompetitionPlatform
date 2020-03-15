@@ -26,4 +26,5 @@ urlpatterns = [
     path(r'authenz/', include('apps.authenz.urls')),
     path(r'competition/', include('apps.competition.urls')),
     path(r'submission/', include('apps.submission.urls')),
+    path(r'statistics/', include('apps.statistics.urls')),
 ]

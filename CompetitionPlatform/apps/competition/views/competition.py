@@ -8,6 +8,7 @@ from apps.competition.utils import parse_participants, parse_standard_from_bundl
 import zipfile
 from apps.submission.utils import flatten_dir_structure
 from apps.submission.models import Submission
+from django.conf import settings
 
 
 @login_required(login_url='/authenz/login')
@@ -68,9 +69,7 @@ def competition_list_submission(request):
         username = request.user.username
         competition_list = Competition.objects.all().order_by('-created_time')
 
-        # domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
-        # # # todo change back!!!!!!
-        domain = '127.0.0.1'
+        domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 
         return render(request, 'competition/list_submission.html', locals())
 
@@ -97,9 +96,7 @@ def competition_detail(request, cid):
                 for i in file_list:
                     p.display_missing = p.display_missing + i + '<br>'
 
-    # domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
-    # # # todo change back!!!!!!
-    domain = '127.0.0.1'
+    domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 
     if not competition:
         return HttpResponse('<h1>404</h1>')  # todo

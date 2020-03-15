@@ -58,6 +58,7 @@ def get_filtered_bundle(submission, origin_bundle):
         print('bundle: ', bundle_files)
 
         print(flatten_dir_structure(get_dir_structure(tmpdir)))
+        os.makedirs(os.path.join(filtered_dir, bundle_name), exist_ok=True)
         # start filter: move valid stuff in origin_dir to filtered_dir
         for file_path in standard_files:
             if file_path in bundle_files:

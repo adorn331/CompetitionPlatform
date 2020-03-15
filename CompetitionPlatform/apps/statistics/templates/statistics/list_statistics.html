@@ -1,0 +1,42 @@
+{% extends 'competition/base.html' %}
+
+{% block content %}
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend align="center">比赛参赛者提交情况</legend>
+</fieldset>
+
+<table class="layui-table" lay-size="lg">
+  <colgroup>
+    <col width="150">
+    <col width="300">
+    <col width="220">
+    <col>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>比赛名</th>
+      <th>比赛描述</th>
+      <th>创建时间</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for c in competition_list%}
+    <tr>
+    <td>{{ c.name }}</td>
+    <td>{{ c.description }}</td>
+    <td>{{ c.created_time }}</td>
+      <td>
+          <a href="{% url 'attendance_statistics' c.id %}" class="layui-btn layui-btn-radius">出席情况报表</a>
+          <a href="{% url 'completion_statistics' c.id %}" class="layui-btn layui-btn-radius">完成度情况报表</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+
+
+{% endblock %}
+

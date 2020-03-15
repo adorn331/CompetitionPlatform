@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.authenz',
     'apps.competition',
     'apps.submission',
+    'apps.statistics',
     'rest_framework',
     'rest_framework_swagger',
 ]
