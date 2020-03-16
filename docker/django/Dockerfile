@@ -10,4 +10,6 @@ RUN pip install --upgrade pip  # make things faster, hopefully
 COPY CompetitionPlatform/requirements/requirements.txt requirements.txt
 RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
+ENV PATH="/app/utils:${PATH}"
+
 WORKDIR /app/CompetitionPlatform

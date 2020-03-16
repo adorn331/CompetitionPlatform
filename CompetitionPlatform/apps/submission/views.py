@@ -1,14 +1,13 @@
-from django.http.response import HttpResponse
-from django.shortcuts import redirect
-
 from apps.submission.models import Submission
 from apps.competition.models import Competition, Participant
-from apps.submission.utils import verify_bundle, get_filtered_bundle, get_file_md5, tempdir, flatten_dir_structure, unflatten_dir_structure, get_dir_structure
+from apps.submission.utils import verify_bundle, get_filtered_bundle, get_file_md5, tempdir,\
+    flatten_dir_structure, unflatten_dir_structure, get_dir_structure
 from io import BytesIO
 import os
 import zipfile
 from django.http import HttpResponse
 import json
+from apps.detector.utils import inspect_plagiarism
 
 
 # todo 安全性？
@@ -34,6 +33,9 @@ def submission_create(request):
         # submission.save()
 
         get_filtered_bundle(submission, bundle)
+
+        competition = Competition.objects.get(name=cname)
+        inspect_plagiarism(competition, submission)
 
         return HttpResponse('200', status=200)
     else:
@@ -121,7 +123,6 @@ def compare_to_manual_collected(request, cid):
                     zip_ref.extractall(path=collected_dir)
 
             # star compare and get the result
-            print('@@@@@@@@@@@@@@@@@')
             uploaded_set = set(flatten_dir_structure(get_dir_structure(uploaded_dir)))
             collected_set = set(flatten_dir_structure(get_dir_structure(collected_dir)))
 
@@ -140,13 +141,12 @@ def compare_to_manual_collected(request, cid):
             if len(diff_set1) == 0 and len(diff_set2) == 0:
                 msg += '<br>' * 8 + '手工收集的提交和服务器收集到的提交相同！'
 
-            print('@@@@@@@@@@@@@@@@@')
-
         resp = {
             'code': '200',
             'msg': msg
         }
         return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
+
     except Exception:
         msg = '<br>' * 8 + '接口异常，请检查是否所有选手提交都放置一个文件夹内再压缩上传！'
         resp = {

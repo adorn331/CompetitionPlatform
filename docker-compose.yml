@@ -65,6 +65,7 @@ services:
     volumes:
       - ./certs:/app/certs
       - ./CompetitionPlatform:/app/CompetitionPlatform
+      - ./utils:/app/utils
       - ./docker:/app/docker
       - ${LOGGING_DIR}/django:/var/log/django/
       - ./backups:/app/backups
@@ -121,6 +122,7 @@ services:
     command: sh /app/docker/run_site.sh
     volumes:
       - ./CompetitionPlatform:/app/CompetitionPlatform
+      - ./utils:/app/utils
       - ./docker:/app/docker
       - ./certs:/app/certs
       - ${LOGGING_DIR}/worker_site:/var/log/
