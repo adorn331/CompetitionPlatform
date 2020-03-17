@@ -13,4 +13,4 @@ class Similarity(models.Model):
     dest_submission = models.ForeignKey(to=Submission, on_delete=models.CASCADE, related_name='dest_sub')
     dest_file = models.CharField(max_length=64)
 
-    percentage = models.FloatField()
+    percentage = models.IntegerField()
