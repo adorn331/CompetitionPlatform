@@ -6,7 +6,8 @@ def inspect_plagiarism(competition, submission):
     for p in competition.participants.all():
         previous_submission = p.uploaded_submission.first()
         if previous_submission:
-            calculate_submission_similarity.apply_async((competition.id, submission.id, previous_submission.id))
+            if previous_submission.id != submission.id: # don't compare with it's self
+                calculate_submission_similarity.apply_async((competition.id, submission.id, previous_submission.id))
 
 
 def calculate_file_similarity(src_path, dest_path):

@@ -33,8 +33,17 @@ def plagiarism_detail(request, cid):
     domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
     competition = Competition.objects.get(pk=cid)
 
-    threshold = 90 # todo given by other places
+    threshold = request.GET.get('threshold', 90)
     similarity_records = Similarity.objects.filter(competition=competition, percentage__gt=threshold)
+
+    participant_num = Participant.objects.filter(competition=competition, uploaded_submission__bundle__isnull=False).count()
+    total_compare_times = participant_num * (participant_num - 1) / 2
+    print(f'total:{total_compare_times}')
+    from django.db.models import Count
+    current_compared = Similarity.objects.filter(competition=competition).values('src_submission', 'dest_submission').annotate(filecount=Count('src_file')).count()
+    print(f'done:{current_compared}')
+
+    percentage_already_compared = (current_compared / total_compare_times) * 100
 
     if not competition:
         return HttpResponse('<h1>404</h1>')  # todo
