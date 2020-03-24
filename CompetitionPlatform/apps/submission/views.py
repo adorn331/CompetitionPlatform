@@ -20,6 +20,9 @@ def submission_create(request):
 
         # ensure the transfer correctly
         client_md5 = request.GET.get('md5', '')
+        
+        print(pno, cname, bundle.name, client_md5)
+        print(get_file_md5(bundle))
         if client_md5:
             if get_file_md5(bundle) != client_md5:
                 return HttpResponse('MD5 not match!', status=400)
