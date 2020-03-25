@@ -18,12 +18,14 @@ def competition_create(request):
         try:
             name = request.POST['name']
             description = request.POST['description']
+            submission_path = request.POST['submission_path']
             file_list = request.FILES.getlist('file')
 
             # save basic info
             competition = Competition()
             competition.name = name
             competition.description = description
+            competition.submission_path = submission_path
             competition.submission_standard = {}
             cid = competition.save()
 
@@ -123,10 +125,12 @@ def competition_update(request, cid):
     if request.method == 'POST':
         name = request.POST['name']
         description = request.POST['description']
+        submission_path = request.POST['submission_path']
         file_list = request.FILES.getlist('file')
 
         competition.name = name
         competition.description = description
+        competition.submission_path = submission_path
         competition.save()
 
         # handle the files uploaded.

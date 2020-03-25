@@ -8,9 +8,77 @@ import zipfile
 from django.http import HttpResponse
 import json
 from apps.detector.utils import inspect_plagiarism
+from apps.submission.utils import send_request_to_client
 
 
-# todo 安全性？
+def request_all_submission(request, cid):
+    competition = Competition.objects.get(pk=cid)
+    blank_host_participants = []
+    fail_sent_participants = []
+    for p in competition.participants.all():
+        if p.host:
+            try:
+                send_request_to_client(p.host, competition.submission_path, p.pno, competition.name)
+            except Exception as e:
+                fail_sent_participants.append(p)
+        else:
+            blank_host_participants.append(p)
+
+    msg = ''
+    if len(blank_host_participants) == 0 and len(fail_sent_participants) == 0:
+        msg += '<br>' + '全部收集请求发送完毕' + '<br>' * 2
+
+    if len(blank_host_participants) > 0:
+        msg += '<br>' + '因为未配置选手主机地址，而未发送收集请求的有（请尽快前往配置）:' + '<br>' * 2
+        for p in blank_host_participants:
+            msg += '&emsp;' * 2 + p.pno + '|' + p.name + '<br>'
+
+    if len(fail_sent_participants) > 0:
+        msg += '<br>' + '因为网络原因，而未发送收集请求的有:' + '<br>' * 2
+        for p in fail_sent_participants:
+            msg += '&emsp;' * 2 + p.pno + '|' + p.name + '<br>'
+
+    resp = {
+        'code': '200',
+        'msg': msg
+    }
+
+    return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
+
+
+def request_single_submission(request, cid, pid):
+    print('!!!!!!')
+    competition = Competition.objects.get(pk=cid)
+    p = Participant.objects.get(pk=pid)
+    msg = ''
+    if p.host:
+        try:
+            send_request_to_client(p.host, competition.submission_path, p.pno, competition.name)
+            msg = '发送成功'
+            resp = {
+                'code': '200',
+                'msg': msg
+            }
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            msg = '因网络原因，请求失败！'
+            resp = {
+                'code': '400',
+                'msg': msg
+            }
+
+        return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
+
+    else:
+        resp = {
+            'code': '400',
+            'msg': '选手主机地址未配置！请尽快前往配置！'
+        }
+
+        return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
+
+
 def submission_create(request):
     if request.method == "POST":
 
@@ -20,7 +88,7 @@ def submission_create(request):
 
         # ensure the transfer correctly
         client_md5 = request.GET.get('md5', '')
-        
+
         print(pno, cname, bundle.name, client_md5)
         print(get_file_md5(bundle))
         if client_md5:
@@ -28,7 +96,10 @@ def submission_create(request):
                 return HttpResponse('MD5 not match!', status=400)
 
         submission = Submission()
-        submission.participant = Participant.objects.get(pno=pno, competition__name=cname)
+        participant = Participant.objects.get(pno=pno, competition__name=cname)
+        for previous_sub in participant.uploaded_submission.all(): # cover the previous uploaded submission
+            previous_sub.delete()
+        submission.participant = participant
         submission.bundle = bundle
         # submission.save()
 

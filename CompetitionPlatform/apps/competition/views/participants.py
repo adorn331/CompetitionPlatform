@@ -46,6 +46,7 @@ def participant_create(request, cid):
             school = request.POST['school']
             grade = request.POST['grade']
             id_num = request.POST['id_num']
+            host = request.POST['host']
 
             participant = Participant()
             participant.name = name
@@ -55,6 +56,7 @@ def participant_create(request, cid):
             participant.grade = grade
             participant.id_num = id_num
             participant.competition = competition
+            participant.host = host
             participant.save()
 
             return redirect(reverse('participant_list', args=(cid, )))
@@ -83,6 +85,7 @@ def participant_update(request, cid, pid):
         school = request.POST['school']
         grade = request.POST['grade']
         id_num = request.POST['id_num']
+        host = request.POST['host']
 
         participant.name = name
         participant.pno = pno
@@ -90,6 +93,7 @@ def participant_update(request, cid, pid):
         participant.school = school
         participant.grade = grade
         participant.id_num = id_num
+        participant.host = host
 
         participant.save()
         return redirect(reverse('participant_list', args=(cid, )))

@@ -61,4 +61,4 @@ def _get_file_md5(file):
     return str(_hash).upper()
 
 if __name__ == '__main__':
-    app.run()
+    app.run('0.0.0.0')

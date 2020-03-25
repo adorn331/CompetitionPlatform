@@ -73,39 +73,6 @@ def get_dir_structure(dir):
             result[item] = {}
     return result
 
-# def get_dir_structure(dir):
-#     result = {'bundle': {}}     # todo bundle generate from the last path from dir?
-#     for item in os.listdir(dir):
-#         if item == '__MACOSX':
-#             continue
-#         item_path = os.path.join(dir, item)
-#         if os.path.isdir(item_path):
-#             result['bundle'][item] = get_dir_structure(item_path)
-#         else:
-#             result['bundle'][item] = {}
-#     return result
-
-
-# def get_dir_structure(dir):
-#     result = {}
-#     for item in os.listdir(dir):
-#         item_path = os.path.join(dir, item)
-#         if os.path.isdir(item_path):
-#             result[item] = get_dir_structure(item_path)
-#         else:
-#             result[item] = item # todo should be null or {} p.s. representing it has no son.
-#     return result
-
-# def get_dir_structure(dir):
-#     result = []
-#     for item in os.listdir(dir):
-#         item_path = os.path.join(dir, item)
-#         if os.path.isdir(item_path):
-#             result.append({item:get_dir_structure(item_path)})
-#         else:
-#             result.append(item)
-#     return result
-
 
 def parse_participants(mem_csv_file, competition):
     # parse participants

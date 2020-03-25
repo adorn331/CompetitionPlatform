@@ -248,3 +248,5 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'adorn331@163.com')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'Codalab2019')
 DEFAULT_FROM_EMAIL = 'adorn331@163.com'
+
+CLIENT_PORT = os.environ.get('CLIENT_PORT', '5000')

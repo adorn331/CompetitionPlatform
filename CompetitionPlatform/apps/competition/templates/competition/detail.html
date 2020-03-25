@@ -4,6 +4,9 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
   <legend align="center">{{competition.name}}   参赛者及其提交</legend>
 </fieldset>
+<div align="center">
+    <buttton id="requestAllSub" class="layui-btn layui-btn-xs">向全部选手发送收集请求</buttton>
+</div>
 
 <table class="layui-table" lay-size="sm">
   <colgroup>
@@ -39,17 +42,21 @@
       {% if p.submission %}
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
       <a href="http://{{ domain }}/media/{{ p.submission.filtered_bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
-      <button id="layerDemo{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs">提交详情预览</button>
+      <button id="displaySubDetail{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs">提交详情预览</button>
       <button type="button" class="layui-btn layui-btn-primary layui-btn-xs layui-btn-disabled" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
+      <buttton id="requestSub{{ p.id }}"  class="layui-btn layui-btn-xs layui-btn-disabled">发送收集请求</buttton>
       {% else %}
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
-      <button id="layerDemo{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs layui-btn-disabled">提交详情预览</button>
+      <button id="displaySubDetail{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs layui-btn-disabled">提交详情预览</button>
       <button type="button" class="layui-btn layui-btn-primary layui-btn-xs" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
+      <buttton id="requestSub{{ p.id }}"  class="layui-btn layui-btn-xs layui-btn-primary">发送收集请求</buttton>
       {% endif %}
 
+
+
 {#      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled" >提交详情预览</a>#}
-{#    <button data-method="confirmTrans" class="layui-btn" id="layerDemo{{ p.id }}">配置一个透明的询问框</button>#}
+{#    <button data-method="confirmTrans" class="layui-btn" id="displaySubDetail{{ p.id }}">配置一个透明的询问框</button>#}
     </td>
 
     </tr>
@@ -62,30 +69,30 @@
 
 {% block js %}
 <script>
-    layui.use('upload', function() {
-        var $ = layui.jquery
-            , upload = layui.upload, layer = layui.layer;
+// upload button
+layui.use('upload', function() {
+    var $ = layui.jquery
+        , upload = layui.upload, layer = layui.layer;
 
-        {% for p in participants %}
-        upload.render({ //允许上传的文件后缀
-            elem: '#upload{{ p.id }}'
-            , url: 'http://{{ domain }}/submission/create?pno={{ p.pno }}&cname={{competition.name}}'
-            , accept: 'file' //普通文件
-            , exts: 'zip|rar|7z|tar|tar.gz' //只允许上传压缩文件
-            , done: function (res) {
-                layer.msg('上传成功');
-                console.log(res);
-                location.reload();
-            }
-        });
-        {% endfor %}
-
+    {% for p in participants %}
+    upload.render({ //允许上传的文件后缀
+        elem: '#upload{{ p.id }}'
+        , url: 'http://{{ domain }}/submission/create?pno={{ p.pno }}&cname={{competition.name}}'
+        , accept: 'file' //普通文件
+        , exts: 'zip|rar|7z|tar|tar.gz' //只允许上传压缩文件
+        , done: function (res) {
+            layer.msg('上传成功');
+            console.log(res);
+            location.reload();
+        }
     });
+    {% endfor %}
 
-    function btn(){
-        layer.msg('hello');
-    }
+});
 
+function btn(){
+    layer.msg('hello');
+}
 
 layui.use('layer', function(){ //独立版的layer无需执行这一句
   var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
@@ -93,41 +100,66 @@ layui.use('layer', function(){ //独立版的layer无需执行这一句
   //触发事件
   var active = {
 
-    offset: function(othis, bundle, missing){
+    offset: function(othis, content){
       var type = othis.data('type')
       ,text = othis.text();
 
       layer.open({
         type: 1
         ,offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
-        ,id: 'layerDemo'+type //防止重复弹出
-        ,content: '<div style="padding: 20px 100px;">'+ bundle + missing +'</div>'
+        ,id: 'displaySubDetail'+type //防止重复弹出
+        ,content: '<div style="padding: 20px 40px;">'+ content +'</div>'
         ,btn: '关闭全部'
         ,btnAlign: 'c' //按钮居中
         ,shade: 0 //不显示遮罩
         ,yes: function(){
           layer.closeAll();
+          location.reload();
         }
       });
     }
 
-      ,confirmTrans: function(){
-      //配置一个透明的询问框
-      layer.msg('大部分参数都是可以公用的<br>合理搭配，展示不一样的风格', {
-        time: 20000, //20s后自动关闭
-        btn: ['明白了', '知道了', '哦']
-      });
-    }
   };
 
-
+  // for the detail layer
   {% for p in participants %}
-  $('#layerDemo{{ p.id }}').on('click', function(){
+  $('#displaySubDetail{{ p.id }}').on('click', function(){
     var othis = $(this), method = othis.data('method');
-    active[method] ? active[method].call(this, othis, '{{ p.display_bundle | safe }}', '{{ p.display_missing | safe }}') : '';
+    active[method] ? active[method].call(this, othis, '{{ p.display_bundle | safe }}' + '{{ p.display_missing | safe }}') : '';
   });
   {% endfor %}
 
+
+    // request single submission button
+    {% for p in participants %}
+    $('#requestSub{{ p.id }}').on('click', function(){
+        $.ajax({
+            url: '{% url 'request_single_submission' competition.id p.id %}',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                var othis = $(this);
+                active['offset'].call(this, othis, data.msg)
+            }
+        });
+    });
+    {% endfor %}
+
+    // request all submission button
+    $('#requestAllSub').on('click', function(){
+        $.ajax({
+            url: '{% url 'request_all_submission' competition.id %}',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                var othis = $(this);
+                active['offset'].call(this, othis, data.msg)
+            }
+        });
+    });
+
 });
+
+
 </script>
 {% endblock %}

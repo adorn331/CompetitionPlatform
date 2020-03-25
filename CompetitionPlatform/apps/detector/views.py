@@ -34,7 +34,7 @@ def plagiarism_detail(request, cid):
     competition = Competition.objects.get(pk=cid)
 
     threshold = request.GET.get('threshold', 90)
-    similarity_records = Similarity.objects.filter(competition=competition, percentage__gt=threshold)
+    similarity_records = Similarity.objects.filter(competition=competition, percentage__gte=threshold)
 
     participant_num = Participant.objects.filter(competition=competition, uploaded_submission__bundle__isnull=False).count()
     total_compare_times = participant_num * (participant_num - 1) / 2

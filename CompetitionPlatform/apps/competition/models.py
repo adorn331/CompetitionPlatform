@@ -8,6 +8,8 @@ class Competition(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     submission_standard = JSONField()
 
+    submission_path = models.CharField(max_length=64, default='/xxx/yyy') # todo get a valid default?
+
     def __str__(self):
         return self.name
 
@@ -24,6 +26,7 @@ class Participant(models.Model):
     id_num = models.CharField(max_length=32)
 
     competition = models.ForeignKey(to=Competition, on_delete=models.CASCADE, related_name='participants')
+    host = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self):
         return self.name
