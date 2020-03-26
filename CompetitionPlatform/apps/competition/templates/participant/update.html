@@ -65,6 +65,8 @@
     </div>
 
 </form>
-
+{% if error %}
+    <div style="color: red;margin-left: 80px">{{ error }}</div>
+{% endif %}
 
 {% endblock %}

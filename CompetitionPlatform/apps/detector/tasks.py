@@ -26,8 +26,11 @@ def calculate_submission_similarity(competition_id, src_sub_id, dest_sub_id):
         src_zip_ref.extractall(path=src_dir)
         # get src_bundle structure & files
         src_bundle_structure = get_dir_structure(src_dir)
-        src_bundle_name = list(src_bundle_structure.keys())[0]
-        src_bundle_files = flatten_dir_structure(src_bundle_structure[src_bundle_name])
+        if list(src_bundle_structure.keys()):
+            src_bundle_name = list(src_bundle_structure.keys())[0]
+            src_bundle_files = flatten_dir_structure(src_bundle_structure[src_bundle_name])
+        else:
+            src_bundle_files = []
         print('src bundle: ', src_bundle_files)
 
 
@@ -37,8 +40,11 @@ def calculate_submission_similarity(competition_id, src_sub_id, dest_sub_id):
         dest_zip_ref.extractall(path=dest_dir)
         # get dest_bundle structure & files
         dest_bundle_structure = get_dir_structure(dest_dir)
-        dest_bundle_name = list(dest_bundle_structure.keys())[0]
-        dest_bundle_files = flatten_dir_structure(dest_bundle_structure[dest_bundle_name])
+        if list(dest_bundle_structure.keys()):
+            dest_bundle_name = list(dest_bundle_structure.keys())[0]
+            dest_bundle_files = flatten_dir_structure(dest_bundle_structure[dest_bundle_name])
+        else:
+            dest_bundle_files = []
         print('dest bundle: ', dest_bundle_files)
 
         # start to compare each file's similarity

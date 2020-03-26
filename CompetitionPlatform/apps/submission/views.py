@@ -29,14 +29,16 @@ def request_all_submission(request, cid):
         msg += '<br>' + '全部收集请求发送完毕' + '<br>' * 2
 
     if len(blank_host_participants) > 0:
-        msg += '<br>' + '因为未配置选手主机地址，而未发送收集请求的有（请尽快前往配置）:' + '<br>' * 2
+        msg += '<br>' + '因为未配置选手主机地址，而未发送收集请求的有：' + '<br>' * 2
         for p in blank_host_participants:
             msg += '&emsp;' * 2 + p.pno + '|' + p.name + '<br>'
+        msg += '<br>' + '请尽快前往人员管理页面配置上述选手主机地址！' + '<br>'
 
     if len(fail_sent_participants) > 0:
         msg += '<br>' + '因为网络原因，而未发送收集请求的有:' + '<br>' * 2
         for p in fail_sent_participants:
             msg += '&emsp;' * 2 + p.pno + '|' + p.name + '<br>'
+        msg += '<br>' + '请检查上述选手机器上是否开启客户端，以及网络是否正确联通！' +'<br>'
 
     resp = {
         'code': '200',
@@ -50,22 +52,19 @@ def request_single_submission(request, cid, pid):
     print('!!!!!!')
     competition = Competition.objects.get(pk=cid)
     p = Participant.objects.get(pk=pid)
-    msg = ''
     if p.host:
         try:
             send_request_to_client(p.host, competition.submission_path, p.pno, competition.name)
-            msg = '发送成功'
             resp = {
                 'code': '200',
-                'msg': msg
+                'msg': '发送成功'
             }
         except Exception as e:
             import traceback
             traceback.print_exc()
-            msg = '因网络原因，请求失败！'
             resp = {
                 'code': '400',
-                'msg': msg
+                'msg': '因网络原因，请求失败！请检查上述选手机器上是否开启客户端，以及网络是否正确联通！'
             }
 
         return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
@@ -73,7 +72,7 @@ def request_single_submission(request, cid, pid):
     else:
         resp = {
             'code': '400',
-            'msg': '选手主机地址未配置！请尽快前往配置！'
+            'msg': '选手主机地址未配置！请尽快前往比赛的人员管理页面配置！'
         }
 
         return HttpResponse(json.dumps(resp), content_type="application/json", status=200)

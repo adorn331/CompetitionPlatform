@@ -29,7 +29,7 @@ def list_statistics(request):
 def attendance_statistics(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all()
+    participants = competition.participants.all().order_by('pno')
     attended_participants = []
     unattended_participants = []
     for p in participants:
@@ -49,7 +49,7 @@ def attendance_statistics(request, cid):
 def completion_statistics(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all()
+    participants = competition.participants.all().order_by('pno')
 
     for p in participants:
         p.submission = Submission.objects.filter(participant=p).first()
@@ -87,7 +87,7 @@ def get_attended_participant_csv(request, cid):
 
 
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all()
+    participants = competition.participants.all().order_by('pno')
     attended_participants = []
     unattended_participants = []
     for p in participants:
@@ -111,7 +111,7 @@ def get_unattended_participant_csv(request, cid):
     writer = csv.writer(response)
 
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all()
+    participants = competition.participants.all().order_by('pno')
     attended_participants = []
     unattended_participants = []
     for p in participants:
@@ -135,7 +135,7 @@ def get_compeltion_csv(request, cid):
     writer = csv.writer(response)
 
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all()
+    participants = competition.participants.all().order_by('pno')
 
     writer.writerow(['考号', '姓名', '状态', '未完成题目'])
 

@@ -82,7 +82,7 @@ def parse_participants(mem_csv_file, competition):
             for chunk in mem_csv_file.chunks():
                 tmpcsv.write(chunk)
         # parse csv file to real participants
-        with open(tmpdir + 'tmp.csv', 'r') as tmpcsv:
+        with open(tmpdir + 'tmp.csv', 'r', encoding='utf-8-sig') as tmpcsv:
             reader = csv.reader(tmpcsv)
             for line in reader:
                 print(line)

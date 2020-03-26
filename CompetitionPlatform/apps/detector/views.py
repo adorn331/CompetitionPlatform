@@ -43,7 +43,7 @@ def plagiarism_detail(request, cid):
     current_compared = Similarity.objects.filter(competition=competition).values('src_submission', 'dest_submission').annotate(filecount=Count('src_file')).count()
     print(f'done:{current_compared}')
 
-    percentage_already_compared = (current_compared / total_compare_times) * 100
+    percentage_already_compared = (current_compared / total_compare_times) * 100 if total_compare_times else 100
 
     if not competition:
         return HttpResponse('<h1>404</h1>')  # todo

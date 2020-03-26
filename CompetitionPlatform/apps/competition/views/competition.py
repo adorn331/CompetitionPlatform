@@ -80,7 +80,7 @@ def competition_list_submission(request):
 def competition_detail(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all()
+    participants = competition.participants.all().order_by('pno')
 
     for p in participants:
         p.submission = Submission.objects.filter(participant=p).first()

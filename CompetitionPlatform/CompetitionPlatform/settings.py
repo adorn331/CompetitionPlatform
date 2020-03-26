@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.detector',
     'rest_framework',
     'rest_framework_swagger',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [

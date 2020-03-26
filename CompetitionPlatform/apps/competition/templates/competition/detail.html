@@ -39,12 +39,13 @@
     {% endif %}
 
     <td>
+
       {% if p.submission %}
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
       <a href="http://{{ domain }}/media/{{ p.submission.filtered_bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
       <button id="displaySubDetail{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs">提交详情预览</button>
       <button type="button" class="layui-btn layui-btn-primary layui-btn-xs layui-btn-disabled" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
-      <buttton id="requestSub{{ p.id }}"  class="layui-btn layui-btn-xs layui-btn-disabled">发送收集请求</buttton>
+      <buttton id="requestSub{{ p.id }}"  class="layui-btn layui-btn-xs layui-btn-disabled" disabled="disabled">发送收集请求</buttton>
       {% else %}
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
@@ -52,7 +53,6 @@
       <button type="button" class="layui-btn layui-btn-primary layui-btn-xs" id="upload{{ p.id }}"><i class="layui-icon layui-icon-upload"></i>上传</button>
       <buttton id="requestSub{{ p.id }}"  class="layui-btn layui-btn-xs layui-btn-primary">发送收集请求</buttton>
       {% endif %}
-
 
 
 {#      <a href="" class="layui-btn layui-btn-xs layui-btn-disabled" >提交详情预览</a>#}

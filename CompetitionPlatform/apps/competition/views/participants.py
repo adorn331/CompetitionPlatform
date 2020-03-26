@@ -13,7 +13,7 @@ import csv, codecs
 def participant_list(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all()
+    participants = competition.participants.all().order_by('pno')
     domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 
     if not competition:
@@ -26,11 +26,11 @@ def participant_delete(request, cid, pid):
     user = request.user
     participant = Participant.objects.get(pk=pid)
 
-    if  not participant:
+    if not participant:
         return HttpResponse('404')  # todo
 
     participant.delete()
-    return redirect(reverse('participant_list', args=(cid, )))
+    return redirect(reverse('participant_list', args=(cid,)))
 
 
 @login_required(login_url='/authenz/login')
@@ -48,6 +48,10 @@ def participant_create(request, cid):
             id_num = request.POST['id_num']
             host = request.POST['host']
 
+            if competition.participants.filter(pno=pno).first():
+                error = f'考号{pno}已在该比赛中存在！'
+                return render(request, 'participant/create.html', locals())
+
             participant = Participant()
             participant.name = name
             participant.pno = pno
@@ -59,7 +63,7 @@ def participant_create(request, cid):
             participant.host = host
             participant.save()
 
-            return redirect(reverse('participant_list', args=(cid, )))
+            return redirect(reverse('participant_list', args=(cid,)))
 
         except Exception as e:
             traceback.print_exc()
@@ -87,6 +91,11 @@ def participant_update(request, cid, pid):
         id_num = request.POST['id_num']
         host = request.POST['host']
 
+        if competition.participants.filter(pno=pno).first() and \
+                competition.participants.filter(pno=pno).first().id != int(pid):
+            error = f'考号{pno}已在该比赛中存在！'
+            return render(request, 'participant/update.html', locals())
+
         participant.name = name
         participant.pno = pno
         participant.province = province
@@ -96,7 +105,7 @@ def participant_update(request, cid, pid):
         participant.host = host
 
         participant.save()
-        return redirect(reverse('participant_list', args=(cid, )))
+        return redirect(reverse('participant_list', args=(cid,)))
 
     elif request.method == 'GET':
         return render(request, 'participant/update.html', locals())

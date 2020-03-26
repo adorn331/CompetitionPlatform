@@ -14,8 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework_swagger.views import get_swagger_view
+from apps.competition.views.competition import competition_list_admin
 
 schema_view = get_swagger_view(title='API docs')
 
@@ -28,4 +29,5 @@ urlpatterns = [
     path(r'submission/', include('apps.submission.urls')),
     path(r'statistics/', include('apps.statistics.urls')),
     path(r'detector/', include('apps.detector.urls')),
+    re_path(r'^$', competition_list_admin),
 ]
