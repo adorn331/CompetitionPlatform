@@ -30,7 +30,8 @@
       <td>
           <a href="{% url 'competition_update' c.id %}" class="layui-btn layui-btn-radius">信息修改</a>
           <a href="{% url 'participant_list' c.id %}" class="layui-btn layui-btn-radius layui-btn-normal">人员管理</a>
-          <a href="{% url 'competition_delete' c.id %}" class="layui-btn layui-btn-radius layui-btn-danger">删除</a>
+          <button id="del{{ c.id }}"  class="layui-btn layui-btn-radius layui-btn-danger">删除</button>
+{#          <button id="del{{ c.id }}" href="{% url 'competition_delete' c.id %}" class="layui-btn layui-btn-radius layui-btn-danger">删除</button>#}
       </td>
     </tr>
   {% endfor %}
@@ -39,4 +40,23 @@
 
 
 
+{% endblock %}
+
+{% block js %}
+<script>
+    // request all submission button
+    var $ = layui.jquery;
+    {% for c in competition_list%}
+    $('#del{{ c.id }}').on('click', function(){
+        if (window.confirm("确定要删除比赛{{ c.name }}吗？")) {
+            $.ajax({
+                url: '{% url 'competition_delete' c.id %}',
+                type: "GET"
+            });
+            alert('删除成功！');
+            location.reload();
+　　　　}
+    });
+    {% endfor %}
+</script>
 {% endblock %}

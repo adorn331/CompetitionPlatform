@@ -49,7 +49,8 @@
 
     <td>
       <a href="{% url  'participant_update' competition.id p.id %}" class="layui-btn layui-btn-xs">修改</a>
-      <a href="{% url 'participant_delete' competition.id p.id %}" class="layui-btn layui-btn-xs">删除</a>
+      <button id="del{{ p.id }}" class="layui-btn layui-btn-xs">删除</button>
+{#      <a href="{% url 'participant_delete' competition.id p.id %}" class="layui-btn layui-btn-xs">删除</a>#}
     </td>
 
     </tr>
@@ -58,4 +59,23 @@
 
 </table>
 
+{% endblock %}
+
+{% block js %}
+<script>
+    // request all submission button
+    var $ = layui.jquery;
+    {% for p in participants%}
+    $('#del{{ p.id }}').on('click', function(){
+        if (window.confirm("确定要删除{{ p.name }}吗？")) {
+            $.ajax({
+                url: '{% url 'participant_delete' competition.id p.id %}',
+                type: "GET"
+            });
+            alert('删除成功！');
+            location.reload();
+　　　　}
+    });
+    {% endfor %}
+</script>
 {% endblock %}
