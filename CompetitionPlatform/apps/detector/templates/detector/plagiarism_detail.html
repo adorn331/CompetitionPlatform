@@ -48,6 +48,36 @@
 
 </table>
 
+<div class="pagination" align="center">
+    <span class="step-links">
+        {% if similarity_records.has_previous %}
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page=1">第一页</a>
+            </button>
+
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page={{ similarity_records.previous_page_number }}"><i class="layui-icon">&#xe65a;</i></a>
+            </button>
+        {% endif %}
+
+        <span class="current">
+            <button class="layui-btn layui-btn-xs">
+                第 {{ similarity_records.number }}页  共 {{ similarity_records.paginator.num_pages }}页
+            </button>
+        </span>
+
+        {% if similarity_records.has_next %}
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page={{ similarity_records.next_page_number }}"><i class="layui-icon">&#xe65b;</i></a>
+            </button>
+
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page={{ similarity_records.paginator.num_pages }}">最后一页</a>
+            </button>
+        {% endif %}
+    </span>
+</div>
+
 {% endblock %}
 
 {% block js %}

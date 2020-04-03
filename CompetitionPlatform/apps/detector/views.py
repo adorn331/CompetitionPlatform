@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import csv, codecs
+from django.core.paginator import Paginator
 
 
 def hello_site_worker(request):
@@ -21,6 +22,9 @@ def list_detector(request):
         # todo 分页
         username = request.user.username
         competition_list = Competition.objects.all().order_by('-created_time')
+        paginator = Paginator(competition_list, 5)
+        page = request.GET.get('page')
+        competitions = paginator.get_page(page)
 
         domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 
@@ -34,7 +38,10 @@ def plagiarism_detail(request, cid):
     competition = Competition.objects.get(pk=cid)
 
     threshold = request.GET.get('threshold', 90)
-    similarity_records = Similarity.objects.filter(competition=competition, percentage__gte=threshold)
+    similarity_records_list = Similarity.objects.filter(competition=competition, percentage__gte=threshold)
+    paginator = Paginator(similarity_records_list, 10)
+    page = request.GET.get('page')
+    similarity_records = paginator.get_page(page)
 
     participant_num = Participant.objects.filter(competition=competition, uploaded_submission__bundle__isnull=False).count()
     total_compare_times = participant_num * (participant_num - 1) / 2

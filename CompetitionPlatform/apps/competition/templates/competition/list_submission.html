@@ -22,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-  {% for c in competition_list%}
+  {% for c in competitions%}
     <tr>
     <td>{{ c.name }}</td>
     <td>{{ c.description }}</td>
@@ -36,6 +36,36 @@
   {% endfor %}
   </tbody>
 </table>
+
+<div class="pagination" align="center">
+    <span class="step-links">
+        {% if competitions.has_previous %}
+            <button class="layui-btn">
+                <a href="?page=1">第一页</a>
+            </button>
+
+            <button class="layui-btn">
+                <a href="?page={{ competitions.previous_page_number }}"><i class="layui-icon">&#xe65a;</i></a>
+            </button>
+        {% endif %}
+
+        <span class="current">
+            <button class="layui-btn">
+                第 {{ competitions.number }}页  共 {{ competitions.paginator.num_pages }}页
+            </button>
+        </span>
+
+        {% if competitions.has_next %}
+            <button class="layui-btn">
+                <a href="?page={{ competitions.next_page_number }}"><i class="layui-icon">&#xe65b;</i></a>
+            </button>
+
+            <button class="layui-btn">
+                <a href="?page={{ competitions.paginator.num_pages }}">最后一页</a>
+            </button>
+        {% endif %}
+    </span>
+</div>
 
 
 

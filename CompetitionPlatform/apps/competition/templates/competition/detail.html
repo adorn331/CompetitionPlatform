@@ -65,6 +65,36 @@
 
 </table>
 
+<div class="pagination" align="center">
+    <span class="step-links">
+        {% if participants.has_previous %}
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page=1">第一页</a>
+            </button>
+
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page={{ participants.previous_page_number }}"><i class="layui-icon">&#xe65a;</i></a>
+            </button>
+        {% endif %}
+
+        <span class="current">
+            <button class="layui-btn layui-btn-xs">
+                第 {{ participants.number }}页  共 {{ participants.paginator.num_pages }}页
+            </button>
+        </span>
+
+        {% if participants.has_next %}
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page={{ participants.next_page_number }}"><i class="layui-icon">&#xe65b;</i></a>
+            </button>
+
+            <button class="layui-btn layui-btn-xs">
+                <a href="?page={{ participants.paginator.num_pages }}">最后一页</a>
+            </button>
+        {% endif %}
+    </span>
+</div>
+
 {% endblock %}
 
 {% block js %}

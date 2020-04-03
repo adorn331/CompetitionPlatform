@@ -7,13 +7,18 @@ import traceback
 from django.conf import settings
 from django.urls import reverse
 import csv, codecs
+from django.core.paginator import Paginator
 
 
 @login_required(login_url='/authenz/login')
 def participant_list(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all().order_by('pno')
+    participants_list = competition.participants.all().order_by('pno')
+    paginator = Paginator(participants_list, 13)
+    page = request.GET.get('page')
+    participants = paginator.get_page(page)
+
     domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 
     if not competition:

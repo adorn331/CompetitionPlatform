@@ -10,6 +10,7 @@ from apps.submission.utils import flatten_dir_structure
 from apps.submission.models import Submission
 from django.conf import settings
 import csv, codecs
+from django.core.paginator import Paginator
 
 
 @login_required(login_url='/authenz/login')
@@ -19,6 +20,9 @@ def list_statistics(request):
         # todo 分页
         username = request.user.username
         competition_list = Competition.objects.all().order_by('-created_time')
+        paginator = Paginator(competition_list, 5)
+        page = request.GET.get('page')
+        competitions = paginator.get_page(page)
 
         domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 
@@ -49,7 +53,10 @@ def attendance_statistics(request, cid):
 def completion_statistics(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
-    participants = competition.participants.all().order_by('pno')
+    participants_list = competition.participants.all().order_by('pno')
+    paginator = Paginator(participants_list, 13)
+    page = request.GET.get('page')
+    participants = paginator.get_page(page)
 
     for p in participants:
         p.submission = Submission.objects.filter(participant=p).first()
