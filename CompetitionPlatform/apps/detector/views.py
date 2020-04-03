@@ -43,7 +43,7 @@ def plagiarism_detail(request, cid):
     page = request.GET.get('page')
     similarity_records = paginator.get_page(page)
 
-    participant_num = Participant.objects.filter(competition=competition, uploaded_submission__bundle__isnull=False).count()
+    participant_num = Participant.objects.filter(competition=competition, uploaded_submission__bundle__isnull=False, uploaded_submission__valid=True).count()
     total_compare_times = participant_num * (participant_num - 1) / 2
     print(f'total:{total_compare_times}')
     from django.db.models import Count

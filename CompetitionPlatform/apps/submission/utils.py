@@ -12,7 +12,7 @@ def send_request_to_client(client_host, submission_path, pno, cname):
     print(call_back_addr)
     print(client_addr)
     print(request_url)
-    requests.get(request_url)
+    requests.get(request_url, timeout=settings.CLIENT_TIMEOUT) # todo add to env
 
 
 def get_file_md5(file):

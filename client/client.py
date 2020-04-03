@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
-import zipfile, os, time,  hashlib
+import zipfile, os, time,  hashlib, logging
+from logging import FileHandler
 
 app = Flask(__name__)
 
@@ -10,20 +11,21 @@ def listen_from_server():
     submission_path = request.args.get("submissionpath")
     pno = request.args.get("pno")
     cname = request.args.get("cname")
-    print(call_back_addr)
-    print(submission_path)
+    app.logger.info(f'pno:{pno}')
+    app.logger.info(f'cname:{cname}')
+    app.logger.info(f'submission_path:{submission_path}')
+    app.logger.info(f'callback_addr:{call_back_addr}')
     upload_submission(call_back_addr, submission_path, pno, cname)
     return '200'
 
 def upload_submission(call_back_addr, submission_path, pno, cname):
     # zip up the submission
-    submission_bundle_path = 'submission.zip'
+    submission_bundle_path = f'{pno}.zip'
     _make_zip(submission_path, submission_bundle_path)
 
     # cal md5
     with open(submission_bundle_path, 'rb') as bundle:
         md5 = _get_file_md5(bundle)
-    print(md5)
 
     # post to call back
     import requests
@@ -33,9 +35,6 @@ def upload_submission(call_back_addr, submission_path, pno, cname):
 
     call_back_url = call_back_addr + f'?pno={pno}&cname={cname}&md5={md5}'
     requests.post(call_back_url, files=files)
-
-    # clean the zip
-    os.remove(submission_bundle_path)
   
 
 # zip up a dir
@@ -61,4 +60,7 @@ def _get_file_md5(file):
     return str(_hash).upper()
 
 if __name__ == '__main__':
+    app.debug = True
+    handler = logging.FileHandler('client.log')
+    app.logger.addHandler(handler)
     app.run('0.0.0.0')

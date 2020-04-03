@@ -6,6 +6,7 @@ certs/
 var/
 *_old/
 docker-compose.override.yml
+*.log
 
 # CompetitionPlatform Files #
 #################
