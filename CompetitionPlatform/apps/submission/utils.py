@@ -12,7 +12,7 @@ def send_request_to_client(client_host, submission_path, pno, cname):
     print(call_back_addr)
     print(client_addr)
     print(request_url)
-    requests.get(request_url, timeout=settings.CLIENT_TIMEOUT) # todo add to env
+    requests.get(request_url, timeout=int(settings.CLIENT_TIMEOUT))
 
 
 def get_file_md5(file):
@@ -87,8 +87,9 @@ def get_filtered_bundle(submission, origin_bundle):
                     shutil.copy2(src, dest)
 
             # zip up the filtered bundle in filtered dir
-            make_zip(os.listdir(filtered_dir)[0], 'filtered.zip')
+            make_zip(os.path.join(filtered_dir, os.listdir(filtered_dir)[0]), 'filtered.zip') # first and only dir in filtered_dir
         else:
+            # todo fixme may be some corner case
             bundle_files = []
             print('empty bundle uploaded!')
             make_zip(filtered_dir, 'filtered.zip')
@@ -137,7 +138,7 @@ def verify_bundle(submission, origin_bundle):
         bundle_structure = get_dir_structure(bundle_path)
         if list(bundle_structure.keys()):
             bundle_name = list(bundle_structure.keys())[0]
-            # if submission.participant.pno != bundle_name:   #todo upload dir name should be pno
+            # if submission.participant.pno != bundle_name:   #fixme upload dir name should be pno
             #     return False
             bundle_files = flatten_dir_structure(bundle_structure[bundle_name])
             print('bundle: ', bundle_files)

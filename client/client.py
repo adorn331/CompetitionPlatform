@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-import zipfile, os, time,  hashlib, logging
+import zipfile, os, time,  hashlib, logging, shutil
 from logging import FileHandler
 
 app = Flask(__name__)
@@ -21,7 +21,12 @@ def listen_from_server():
 def upload_submission(call_back_addr, submission_path, pno, cname):
     # zip up the submission
     submission_bundle_path = f'{pno}.zip'
-    _make_zip(submission_path, submission_bundle_path)
+    copied_submission_path = f'C:\{pno}' # todo change C to a tmp dir, can transplant between diff platform
+    if os.path.exists(copied_submission_path):
+        shutil.rmtree(copied_submission_path)
+    shutil.copytree(submission_path,copied_submission_path)
+    shutil.rmtree(copied_submission_path)
+    _make_zip(copied_submission_path, submission_bundle_path)
 
     # cal md5
     with open(submission_bundle_path, 'rb') as bundle:
