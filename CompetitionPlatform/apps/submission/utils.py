@@ -9,9 +9,6 @@ def send_request_to_client(client_host, submission_path, pno, cname):
     call_back_addr = f'http://{settings.COMPETITIONPLATFORM_SITE_DOMAIN}/submission/create'
     client_addr = client_host + ':' + settings.CLIENT_PORT
     request_url = f'http://{client_addr}?submissionpath={submission_path}&pno={pno}&cname={cname}&callback={call_back_addr}'
-    print(call_back_addr)
-    print(client_addr)
-    print(request_url)
     requests.get(request_url, timeout=int(settings.CLIENT_TIMEOUT))
 
 

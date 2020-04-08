@@ -61,7 +61,7 @@ def completion_statistics(request, cid):
     for p in participants:
         p.submission = Submission.objects.filter(participant=p).first()
         if p.submission:
-            p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
+            # p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
 
             p.display_missing = ''
             if p.submission.missing_files:
@@ -149,7 +149,7 @@ def get_compeltion_csv(request, cid):
     for p in participants:
         p.submission = Submission.objects.filter(participant=p).first()
         if p.submission:
-            p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
+            # p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
 
             p.display_missing = ''
             if p.submission.missing_files:
@@ -165,6 +165,6 @@ def get_compeltion_csv(request, cid):
                     p.display_missing = p.display_missing + i.split('/')[-1] + ' ｜ '
                 p.display_missing = p.display_missing[:-2]
 
-        writer.writerow([p.pno, p.name, p.submission.status if p.submission else '未提交', p.display_missing])
+        writer.writerow([p.pno, p.name, p.submission.status, p.display_missing])
 
     return response

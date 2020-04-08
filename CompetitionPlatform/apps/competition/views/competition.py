@@ -39,6 +39,7 @@ def competition_create(request):
                 else:
                     print('$$$$$$$$$$')
                     print(zipfile.is_zipfile(f))
+                    # todo fixme: 上传的不是zip or 解压zip 出错的时候返回报错
                     # parse standard bundle
                     submission_standard = parse_standard_from_bundle(f)
                     competition.submission_standard = submission_standard
@@ -93,7 +94,7 @@ def competition_detail(request, cid):
     for p in participants:
         p.submission = Submission.objects.filter(participant=p).first()
         if p.submission:
-            p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
+            # p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
             p.display_bundle = '已提交文件<br>'
             if p.submission.bundle_structure:
                 file_list = flatten_dir_structure(p.submission.bundle_structure)

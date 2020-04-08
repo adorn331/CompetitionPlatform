@@ -15,6 +15,6 @@ class Submission(models.Model):
     bundle = models.FileField(upload_to=origin_bundle_path)
     filtered_bundle = models.FileField(upload_to=filtered_bundle_path)
     participant = models.ForeignKey(to=Participant, on_delete=models.CASCADE, related_name='uploaded_submission')
-    valid = models.BooleanField(default=False)
+    status = models.CharField(max_length=64, default='已提交，校验中..')
     bundle_structure = JSONField(blank=True, null=True)
     missing_files = JSONField(blank=True, null=True)

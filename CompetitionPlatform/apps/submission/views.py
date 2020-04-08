@@ -110,9 +110,13 @@ def submission_create(request):
         competition = Competition.objects.get(name=cname)
         inspect_plagiarism(competition, submission)
 
-        return HttpResponse('200', status=200)
+        response = HttpResponse('200', status=200)
+        response['Access-Control-Allow-Origin'] = '*' # allow CORS
+        return response
     else:
-        return HttpResponse('404 Not Found.', status=404)
+        response = HttpResponse('404 Not Found.', status=404)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
 
 
 def download_all_submission(request, cid):

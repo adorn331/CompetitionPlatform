@@ -35,7 +35,7 @@
     {% if p.submission %}
         <td>{{p.submission.status}}</td>
     {% else %}
-        <td>未提交</td>
+        <td>未收到提交</td>
     {% endif %}
 
     <td>
@@ -103,7 +103,7 @@
 layui.use('upload', function() {
     var $ = layui.jquery
         , upload = layui.upload, layer = layui.layer;
-
+    console.log(33333);
     {% for p in participants %}
     upload.render({ //允许上传的文件后缀
         elem: '#upload{{ p.id }}'
