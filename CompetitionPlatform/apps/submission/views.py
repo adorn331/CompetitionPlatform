@@ -1,7 +1,7 @@
 from apps.submission.models import Submission
 from apps.competition.models import Competition, Participant
-from apps.submission.utils import verify_bundle, get_filtered_bundle, get_file_md5, tempdir,\
-    flatten_dir_structure, unflatten_dir_structure, get_dir_structure
+from apps.submission.utils import get_file_md5, tempdir, flatten_dir_structure, unflatten_dir_structure, \
+    get_dir_structure, verify_and_filter_bundle
 from io import BytesIO
 import os
 import zipfile
@@ -9,6 +9,43 @@ from django.http import HttpResponse
 import json
 from apps.detector.utils import inspect_plagiarism
 from apps.submission.utils import send_request_to_client
+
+
+def submission_create(request):
+    if request.method == "POST":
+
+        pno = request.GET['pno']
+        cname = request.GET['cname']
+        bundle = request.FILES['file']
+
+        # ensure the transfer correctly
+        client_md5 = request.GET.get('md5', '')
+
+        print(pno, cname, bundle.name, client_md5)
+        print(get_file_md5(bundle))
+        if client_md5:
+            if get_file_md5(bundle) != client_md5:
+                return HttpResponse('MD5 not match!', status=400)
+
+        submission = Submission()
+        participant = Participant.objects.get(pno=pno, competition__name=cname)
+        for previous_sub in participant.uploaded_submission.all(): # cover the previous uploaded submission
+            previous_sub.delete()
+        submission.participant = participant
+        submission.bundle = bundle
+        submission.save()
+
+        verify_and_filter_bundle(submission, bundle)
+
+        inspect_plagiarism(Competition.objects.get(name=cname), submission)
+
+        response = HttpResponse('200', status=200)
+        response['Access-Control-Allow-Origin'] = '*' # allow CORS
+        return response
+    else:
+        response = HttpResponse('404 Not Found.', status=404)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
 
 
 def request_all_submission(request, cid):
@@ -76,47 +113,6 @@ def request_single_submission(request, cid, pid):
         }
 
         return HttpResponse(json.dumps(resp), content_type="application/json", status=200)
-
-
-def submission_create(request):
-    if request.method == "POST":
-
-        pno = request.GET['pno']
-        cname = request.GET['cname']
-        bundle = request.FILES['file']
-
-        # ensure the transfer correctly
-        client_md5 = request.GET.get('md5', '')
-
-        print(pno, cname, bundle.name, client_md5)
-        print(get_file_md5(bundle))
-        if client_md5:
-            if get_file_md5(bundle) != client_md5:
-                return HttpResponse('MD5 not match!', status=400)
-
-        submission = Submission()
-        participant = Participant.objects.get(pno=pno, competition__name=cname)
-        for previous_sub in participant.uploaded_submission.all(): # cover the previous uploaded submission
-            previous_sub.delete()
-        submission.participant = participant
-        submission.bundle = bundle
-        # submission.save()
-
-        submission.valid = verify_bundle(submission, bundle)
-        # submission.save()
-
-        get_filtered_bundle(submission, bundle)
-
-        competition = Competition.objects.get(name=cname)
-        inspect_plagiarism(competition, submission)
-
-        response = HttpResponse('200', status=200)
-        response['Access-Control-Allow-Origin'] = '*' # allow CORS
-        return response
-    else:
-        response = HttpResponse('404 Not Found.', status=404)
-        response['Access-Control-Allow-Origin'] = '*'
-        return response
 
 
 def download_all_submission(request, cid):
