@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-import zipfile, os, time,  hashlib, logging, shutil
+import zipfile, os, time,  hashlib, logging, shutil, tempfile, contextlib, requests
 from logging import FileHandler
 
 app = Flask(__name__)
@@ -18,28 +18,32 @@ def listen_from_server():
     upload_submission(call_back_addr, submission_path, pno, cname)
     return '200'
 
+
 def upload_submission(call_back_addr, submission_path, pno, cname):
-    # zip up the submission
-    submission_bundle_path = f'{pno}.zip'
-    copied_submission_path = f'C:\{pno}' # todo change C to a tmp dir, can transplant between diff platform
-    if os.path.exists(copied_submission_path):
-        shutil.rmtree(copied_submission_path)
-    shutil.copytree(submission_path,copied_submission_path)
-    shutil.rmtree(copied_submission_path)
-    _make_zip(copied_submission_path, submission_bundle_path)
+    with _tempdir() as tmpdir:
+        target_path = os.path.join(submission_path, pno)
+        app.logger.info(target_path)
+        if os.path.exists(target_path):
+            # zip up the submission
+            copied_submission_path = os.path.join(tmpdir, pno)
+            shutil.copytree(target_path,copied_submission_path)
+            submission_bundle_path = os.path.join(tmpdir, f'{pno}.zip')
+            _make_zip(target_path, submission_bundle_path)
 
-    # cal md5
-    with open(submission_bundle_path, 'rb') as bundle:
-        md5 = _get_file_md5(bundle)
+            # cal md5
+            with open(submission_bundle_path, 'rb') as bundle:
+                md5 = _get_file_md5(bundle)
 
-    # post to call back
-    import requests
-    files = {
-        "file": open(submission_bundle_path, "rb")
-    }
+            # post to call back
+            files = {
+                "file": open(submission_bundle_path, "rb")
+            }
 
-    call_back_url = call_back_addr + f'?pno={pno}&cname={cname}&md5={md5}'
-    requests.post(call_back_url, files=files)
+            call_back_url = call_back_addr + f'?pno={pno}&cname={cname}&md5={md5}'
+            requests.post(call_back_url, files=files)
+        else:
+            call_back_url = call_back_addr + f'?pno={pno}&cname={cname}'
+            requests.post(call_back_url)
   
 
 # zip up a dir
@@ -53,6 +57,7 @@ def _make_zip(source_dir, output_path):
             zipf.write(pathfile, arcname)
     zipf.close()
 
+
 def _get_file_md5(file):
     """
     :param file: file-like object
@@ -63,6 +68,29 @@ def _get_file_md5(file):
     file.seek(0)
     _hash = md5obj.hexdigest()
     return str(_hash).upper()
+
+# these two function are used to support tmp dir
+@contextlib.contextmanager
+def _cd(newdir, cleanup):
+    prevdir = os.getcwd()
+    os.chdir(os.path.expanduser(newdir))
+    try:
+        yield
+    finally:
+        os.chdir(prevdir)
+        cleanup()
+
+
+@contextlib.contextmanager
+def _tempdir():
+    dirpath = tempfile.mkdtemp()
+
+    def cleanup():
+        shutil.rmtree(dirpath)
+
+    with _cd(dirpath, cleanup):
+        yield dirpath
+
 
 if __name__ == '__main__':
     app.debug = True

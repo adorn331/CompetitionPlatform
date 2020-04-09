@@ -36,12 +36,23 @@ def make_zip(source_dir, output_filename):
     zipf.close()
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 # parse the bundle structure
 # check if the bundle structure match the standard, figure out the missing files
 # then get the filtered bundle, which will remove the files that not declared in standard
-def verify_and_filter_bundle(submission, origin_bundle):
+def verify_and_filter_bundle(submission, origin_bundle, client_ip):
     ####################### verify part ##################
+    print(client_ip)
     print('[IN validate]', '--' * 50)
+
     # save origin_bundle to disk (in tmpdir)
     with tempdir() as tmpdir:
         bundle_zip_path = tmpdir + '/bundle.zip'
@@ -63,6 +74,8 @@ def verify_and_filter_bundle(submission, origin_bundle):
         standard_files = flatten_dir_structure(standard_structure[standard_bundle_name])
         print('standard: ', standard_files)
 
+        submission_status = '已提交:符合规范'
+        status_decided = False
         # get origin_bundle structure: every item in standard should occur in uploaded bundle.
         bundle_structure = get_dir_structure(origin_dir)
         if list(bundle_structure.keys()):
@@ -74,18 +87,42 @@ def verify_and_filter_bundle(submission, origin_bundle):
         else:
             # upload an empty bundle
             bundle_files = []
+            submission_status = f'未提交:选手文件夹{submission.participant.pno}为空'
+            status_decided = True
             print('empty bundle uploaded!')
 
-        missing_files = []
-        status = '已提交且符合规范'
+        bundle_files_without_dir = [os.path.split(x)[1] for x in bundle_files]
 
+        missing_files = []
         # start validation
         for file_path in standard_files:
-            if file_path not in bundle_files:
-                status = '已提交但部分文件缺失'
-                missing_files.append(file_path)
+            if file_path in bundle_files:
+                # 若一个匹配成功，将当前文件夹下面的其他相同后缀标准文件忽略
+                def get_equivalent_file(target, files):
+                    equivalent_file = []
+                    for f in files:
+                        if f != target and target.split('.')[0] == f.split('.')[0]:
+                            equivalent_file.append(f)
+                    return equivalent_file
+                print('@@@@@')
+                print(file_path, get_equivalent_file(file_path, standard_files))
+                for f in get_equivalent_file(file_path, standard_files):
+                    print('!' + f + '!')
+                    standard_files.remove(f)
+                print(standard_files)
+                print('@@@@@')
 
-        submission.status = status
+            if file_path not in bundle_files and not status_decided:
+                if os.path.split(file_path)[1] in bundle_files_without_dir:
+                    # 可能是BJ-01/task1.c 而 标准s是 BJ-01/task1/task1.c
+                    submission_status = '已提交:但规定子目录未建'
+                    status_decided = True
+                else:
+                    submission_status = '已提交:部分文件未完成'
+                    status_decided = True
+                missing_files.append(os.path.join(submission.participant.pno, file_path))
+
+        submission.status = submission_status
         submission.bundle_structure = bundle_structure
         submission.missing_files = unflatten_dir_structure(missing_files)
         submission.save()
@@ -119,7 +156,8 @@ def verify_and_filter_bundle(submission, origin_bundle):
                     shutil.copy2(src, dest)
 
             # zip up the filtered bundle in filtered dir
-            make_zip(os.path.join(filtered_dir, os.listdir(filtered_dir)[0]), 'filtered.zip') # first and only dir in filtered_dir
+            make_zip(os.path.join(filtered_dir, os.listdir(filtered_dir)[0]),
+                     'filtered.zip')  # first and only dir in filtered_dir
         else:
             # todo fixme may be some corner case
             bundle_files = []

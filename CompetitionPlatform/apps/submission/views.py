@@ -1,7 +1,7 @@
 from apps.submission.models import Submission
 from apps.competition.models import Competition, Participant
 from apps.submission.utils import get_file_md5, tempdir, flatten_dir_structure, unflatten_dir_structure, \
-    get_dir_structure, verify_and_filter_bundle
+    get_dir_structure, verify_and_filter_bundle, get_client_ip
 from io import BytesIO
 import os
 import zipfile
@@ -16,13 +16,11 @@ def submission_create(request):
 
         pno = request.GET['pno']
         cname = request.GET['cname']
-        bundle = request.FILES['file']
-
-        # ensure the transfer correctly
+        bundle = request.FILES.get('file', None)
         client_md5 = request.GET.get('md5', '')
 
-        print(pno, cname, bundle.name, client_md5)
-        print(get_file_md5(bundle))
+        # ensure the transfer correctly
+        print(pno, cname, bundle, client_md5, request.FILES)
         if client_md5:
             if get_file_md5(bundle) != client_md5:
                 return HttpResponse('MD5 not match!', status=400)
@@ -35,7 +33,14 @@ def submission_create(request):
         submission.bundle = bundle
         submission.save()
 
-        verify_and_filter_bundle(submission, bundle)
+        if not submission.bundle:
+            submission.status = f'提交失败:目标文件夹{pno}缺失'
+            submission.save()
+            response = HttpResponse('200', status=200)
+            response['Access-Control-Allow-Origin'] = '*'  # allow CORS
+            return response
+
+        verify_and_filter_bundle(submission, bundle, get_client_ip(request))
 
         inspect_plagiarism(Competition.objects.get(name=cname), submission)
 

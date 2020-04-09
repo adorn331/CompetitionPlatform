@@ -10,9 +10,9 @@
 
 <table class="layui-table" lay-size="sm">
   <colgroup>
-    <col width="200">
     <col width="120">
-    <col width="200">
+    <col width="150">
+    <col width="300">
     <col>
   </colgroup>
 
@@ -40,7 +40,7 @@
 
     <td>
 
-      {% if p.submission %}
+      {% if p.submission.bundle %}
       <a href="http://{{ domain }}/media/{{ p.submission.bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>原始提交</a>
       <a href="http://{{ domain }}/media/{{ p.submission.filtered_bundle  }}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-download-circle"></i>过滤后</a>
       <button id="displaySubDetail{{ p.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-xs">提交详情预览</button>
