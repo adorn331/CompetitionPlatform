@@ -11,6 +11,7 @@
 <table class="layui-table" lay-size="sm">
   <colgroup>
     <col width="200">
+    <col width="100">
     <col width="120">
     <col width="200">
     <col>
@@ -19,6 +20,7 @@
   <thead>
     <tr>
       <th>参赛者考号</th>
+      <th>座位号</th>
       <th>姓名</th>
       <th>状态</th>
       <th>未完成</th>
@@ -30,6 +32,7 @@
     <tr>
 
     <td>{{ p.pno }}</td>
+    <td>{{ p.position}}</td>
     <td>{{ p.name }}</td>
 
     {% if p.submission %}

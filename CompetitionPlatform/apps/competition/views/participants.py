@@ -52,6 +52,7 @@ def participant_create(request, cid):
             grade = request.POST['grade']
             id_num = request.POST['id_num']
             host = request.POST['host']
+            position = request.POST['position']
 
             if competition.participants.filter(pno=pno).first():
                 error = f'考号{pno}已在该比赛中存在！'
@@ -66,6 +67,7 @@ def participant_create(request, cid):
             participant.id_num = id_num
             participant.competition = competition
             participant.host = host
+            participant.position = position
             participant.save()
 
             return redirect(reverse('participant_list', args=(cid,)))
@@ -95,6 +97,7 @@ def participant_update(request, cid, pid):
         grade = request.POST['grade']
         id_num = request.POST['id_num']
         host = request.POST['host']
+        position = request.POST['position']
 
         if competition.participants.filter(pno=pno).first() and \
                 competition.participants.filter(pno=pno).first().id != int(pid):
@@ -108,6 +111,7 @@ def participant_update(request, cid, pid):
         participant.grade = grade
         participant.id_num = id_num
         participant.host = host
+        participant.position = position
 
         participant.save()
         return redirect(reverse('participant_list', args=(cid,)))

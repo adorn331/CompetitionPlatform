@@ -93,6 +93,11 @@ def parse_participants(mem_csv_file, competition):
                 participant.id_num = line[3]
                 participant.school = line[4]
                 participant.grade = line[5]
+
+                # parse the position
+                position = line[6]
+                participant.position = position
+
                 participant.competition = competition
                 participant.save()
 
