@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import traceback
-from apps.competition.utils import parse_participants, parse_standard_from_bundle
+from apps.competition.utils import parse_participants, parse_standard_from_bundle, parse_hosts
 import zipfile
 from apps.submission.utils import flatten_dir_structure
 from apps.submission.models import Submission
@@ -20,7 +20,6 @@ def competition_create(request):
             name = request.POST['name']
             description = request.POST['description']
             submission_path = request.POST['submission_path']
-            file_list = request.FILES.getlist('file')
 
             # save basic info
             competition = Competition()
@@ -30,19 +29,17 @@ def competition_create(request):
             competition.submission_standard = {}
             cid = competition.save()
 
-            # handle the files uploaded.
-            for f in file_list:
-                # config participants from csv uploaded.
-                if f.name == 'namelist.csv':
-                    parse_participants(f, competition)
+            standard_bundle = request.FILES.get('standard_bundle')
+            print(standard_bundle)
+            competition.submission_standard = parse_standard_from_bundle(standard_bundle)
 
-                else:
-                    print('$$$$$$$$$$')
-                    print(zipfile.is_zipfile(f))
-                    # todo fixme: 上传的不是zip or 解压zip 出错的时候返回报错
-                    # parse standard bundle
-                    submission_standard = parse_standard_from_bundle(f)
-                    competition.submission_standard = submission_standard
+            namelist = request.FILES.get('namelist')
+            print(namelist)
+            parse_participants(namelist, competition)
+
+            hostmapping = request.FILES.get('hostmapping')
+            print(hostmapping)
+            parse_hosts(hostmapping, competition)
 
             competition.save()
 
@@ -135,24 +132,23 @@ def competition_update(request, cid):
         name = request.POST['name']
         description = request.POST['description']
         submission_path = request.POST['submission_path']
-        file_list = request.FILES.getlist('file')
 
         competition.name = name
         competition.description = description
         competition.submission_path = submission_path
         competition.save()
 
-        # handle the files uploaded.
-        for f in file_list:
-            # config participants from csv uploaded.
-            if f.name == 'namelist.csv':
-                Participant.objects.filter(competition=competition).delete()
-                parse_participants(f, competition)
+        standard_bundle = request.FILES.get('standard_bundle')
+        if standard_bundle:
+            competition.submission_standard = parse_standard_from_bundle(standard_bundle)
 
-            else:
-                # parse standard bundle
-                submission_standard = parse_standard_from_bundle(f)
-                competition.submission_standard = submission_standard
+        namelist = request.FILES.get('namelist')
+        if namelist:
+            parse_participants(namelist, competition)
+
+        hostmapping = request.FILES.get('hostmapping')
+        if hostmapping:
+            parse_hosts(hostmapping, competition)
 
         competition.save()
         return redirect('/competition/list-admin')

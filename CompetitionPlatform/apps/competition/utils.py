@@ -94,12 +94,34 @@ def parse_participants(mem_csv_file, competition):
                 participant.school = line[4]
                 participant.grade = line[5]
 
-                # parse the position
-                position = line[6]
-                participant.position = position
+                if len(line) >= 7:
+                    # parse the position
+                    position = line[6]
+                    participant.position = position
 
                 participant.competition = competition
                 participant.save()
+
+
+def parse_hosts(mem_csv_file, competition):
+    # parse participants
+    with tempdir() as tmpdir:
+        # save memory file to disk
+        with open(tmpdir + 'tmp.csv', 'wb+') as tmpcsv:
+            for chunk in mem_csv_file.chunks():
+                tmpcsv.write(chunk)
+        # parse csv file to real participants
+        with open(tmpdir + 'tmp.csv', 'r', encoding='utf-8-sig') as tmpcsv:
+            reader = csv.reader(tmpcsv)
+            for line in reader:
+                position = line[0]
+                host = line[1]
+                print(position, host)
+                participant = competition.participants.filter(position=position).first()
+                if participant:
+                    participant.host = host
+                    participant.save()
+
 
 
 def parse_standard_from_bundle(mem_bundle_file):

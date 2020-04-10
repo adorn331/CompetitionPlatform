@@ -26,8 +26,9 @@ class Participant(models.Model):
     id_num = models.CharField(max_length=32)
 
     competition = models.ForeignKey(to=Competition, on_delete=models.CASCADE, related_name='participants')
+
     host = models.CharField(max_length=64, blank=True, null=True)
-    position = models.CharField(max_length=16)
+    position = models.CharField(max_length=16, blank=True, null=True)
 
     def __str__(self):
         return self.name
