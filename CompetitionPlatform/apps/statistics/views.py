@@ -15,8 +15,7 @@ from django.core.paginator import Paginator
 
 @login_required(login_url='/authenz/login')
 def summary_graph(request, cid):
-    def parse_position(position):
-        return (int(x) for x in position.split('-'))
+    from apps.competition.utils import parse_position
     color_mapping = {
         '已提交且符合规范': '#2ECC71',
         '提交失败': '#E74C3C',

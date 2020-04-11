@@ -7,6 +7,10 @@ from apps.competition.models import Competition, Participant
 import csv, zipfile
 
 
+def parse_position(position):
+    return (int(x) for x in position.split('-'))
+
+
 # these two function are used to support tmp dir
 @contextlib.contextmanager
 def _cd(newdir, cleanup):
