@@ -9,7 +9,7 @@
 <table class="layui-table" lay-size="lg">
   <colgroup>
     <col width="150">
-    <col width="300">
+    <col width="250">
     <col width="220">
     <col>
   </colgroup>
@@ -28,6 +28,7 @@
     <td>{{ c.description }}</td>
     <td>{{ c.created_time }}</td>
       <td>
+          <a href="{% url 'summary_graph' c.id %}" class="layui-btn layui-btn-radius">总览图</a>
           <a href="{% url 'attendance_statistics' c.id %}" class="layui-btn layui-btn-radius">出席情况报表</a>
           <a href="{% url 'completion_statistics' c.id %}" class="layui-btn layui-btn-radius">完成度情况报表</a>
       </td>

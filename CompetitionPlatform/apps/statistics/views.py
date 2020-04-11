@@ -14,10 +14,49 @@ from django.core.paginator import Paginator
 
 
 @login_required(login_url='/authenz/login')
+def summary_graph(request, cid):
+    def parse_position(position):
+        return (int(x) for x in position.split('-'))
+    color_mapping = {
+        '已提交且符合规范': '#2ECC71',
+        '提交失败': '#E74C3C',
+        '已提交': '#F7DC6F',
+        '': '#C8C8C8'
+    }
+    user = request.user
+    domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
+    if request.method == 'GET':
+        username = request.user.username
+        participants = Competition.objects.get(pk=cid).participants.all().order_by('position')
+        participant_grid = []
+        max_col = 0
+        if participants:
+            grid_row = - 1
+            for p in participants:
+                if not p.position:
+                    p.position = '1-1'
+                cur_row, cur_col = parse_position(p.position)
+                max_col = max(cur_col, max_col)
+                if cur_row - 1 > grid_row:
+                    participant_grid.append([])
+                    grid_row += 1
+                participant_grid[grid_row].append(p)
+
+                if p.uploaded_submission.count() > 0:
+                    p.color = color_mapping[p.uploaded_submission.first().status.split(':')[0]]
+                else:
+                    p.color = color_mapping['']
+
+        col_range = range(max_col)
+        percentage_width_percol = 100 / max_col
+        print(participant_grid)
+
+        return render(request, 'statistics/summary_graph.html', locals())
+
+@login_required(login_url='/authenz/login')
 def list_statistics(request):
     user = request.user
     if request.method == 'GET':
-        # todo 分页
         username = request.user.username
         competition_list = Competition.objects.all().order_by('-created_time')
         paginator = Paginator(competition_list, 5)

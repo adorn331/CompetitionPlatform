@@ -74,7 +74,7 @@ def verify_and_filter_bundle(submission, origin_bundle, client_ip):
         standard_files = flatten_dir_structure(standard_structure[standard_bundle_name])
         print('standard: ', standard_files)
 
-        submission_status = '已提交:符合规范'
+        submission_status = '已提交且符合规范'
         status_decided = False
         # get origin_bundle structure: every item in standard should occur in uploaded bundle.
         bundle_structure = get_dir_structure(origin_dir)
@@ -87,7 +87,7 @@ def verify_and_filter_bundle(submission, origin_bundle, client_ip):
         else:
             # upload an empty bundle
             bundle_files = []
-            submission_status = f'未提交:选手文件夹{submission.participant.pno}为空'
+            submission_status = f'提交失败:选手文件夹{submission.participant.pno}为空'
             status_decided = True
             print('empty bundle uploaded!')
 
@@ -118,7 +118,7 @@ def verify_and_filter_bundle(submission, origin_bundle, client_ip):
                     submission_status = '已提交:但规定子目录未建'
                     status_decided = True
                 else:
-                    submission_status = '已提交:部分文件未完成'
+                    submission_status = '已提交:但部分文件未完成'
                     status_decided = True
                 missing_files.append(os.path.join(submission.participant.pno, file_path))
 
