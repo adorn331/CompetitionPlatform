@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 import zipfile, os, time,  hashlib, logging, shutil, tempfile, contextlib, requests
+import _thread
 from logging import FileHandler
 
 app = Flask(__name__)
@@ -15,7 +16,8 @@ def listen_from_server():
     app.logger.info(f'cname:{cname}')
     app.logger.info(f'submission_path:{submission_path}')
     app.logger.info(f'callback_addr:{call_back_addr}')
-    upload_submission(call_back_addr, submission_path, pno, cname)
+    _thread.start_new_thread(upload_submission,(call_back_addr, submission_path, pno, cname))
+    #upload_submission(call_back_addr, submission_path, pno, cname)
     return '200'
 
 
