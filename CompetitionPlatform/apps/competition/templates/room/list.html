@@ -1,0 +1,68 @@
+{% extends 'competition/base.html' %}
+
+{% block content %}
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend align="center">考场布局信息维护</legend>
+</fieldset>
+
+<div align="center">
+    <a href="{% url 'room_create' %}" class="layui-btn">新增考场布局信息</a>
+</div>
+
+<table class="layui-table" lay-size="lg">
+  <colgroup>
+    <col width="60%">
+    <col width="40%">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>房间名</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rooms%}
+    <tr>
+    <td>{{ r.name }}</td>
+    <td>
+          <a href="{% url 'participant_list' r.id %}" class="layui-btn layui-btn-radius layui-btn-normal">查看布局图</a>
+{#          <a href="{% url 'room_update' r.id %}" class="layui-btn layui-btn-radius">修改</a>#}
+          <a href="{% url 'room_delete' r.id %}"  class="layui-btn layui-btn-radius layui-btn-danger">删除</a>
+    </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<div class="pagination" align="center">
+    <span class="step-links">
+        {% if rooms.has_previous %}
+            <button class="layui-btn">
+                <a href="?page=1">第一页</a>
+            </button>
+
+            <button class="layui-btn">
+                <a href="?page={{ rooms.previous_page_number }}"><i class="layui-icon">&#xe65a;</i></a>
+            </button>
+        {% endif %}
+
+        <span class="current">
+            <button class="layui-btn">
+                第 {{ rooms.number }}页  共 {{ rooms.paginator.num_pages }}页
+            </button>
+        </span>
+
+        {% if rooms.has_next %}
+            <button class="layui-btn">
+                <a href="?page={{ rooms.next_page_number }}"><i class="layui-icon">&#xe65b;</i></a>
+            </button>
+
+            <button class="layui-btn">
+                <a href="?page={{ rooms.paginator.num_pages }}">最后一页</a>
+            </button>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

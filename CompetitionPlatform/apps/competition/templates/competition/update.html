@@ -14,18 +14,17 @@
     </div>
   </div>
 
-  <div class="layui-form-item layui-form-text">
+  <div class="layui-form-item">
     <label class="layui-form-label">比赛描述</label>
     <div class="layui-input-block">
-      <textarea placeholder="请输入比赛描述" class="layui-textarea" name="description">{{ competition.description }}</textarea>
+      <input type="text" name="description" required  lay-verify="required" value={{competition.description}} autocomplete="off" class="layui-input">
     </div>
   </div>
 
-
-  <div class="layui-form-item layui-form-text">
+  <div class="layui-form-item">
     <label class="layui-form-label">选手存放submission路径</label>
     <div class="layui-input-block">
-      <textarea placeholder="请输入选手存放submission路径" class="layui-textarea" name="submission_path">{{ competition.submission_path }}</textarea>
+      <input type="text" name="submission_path" required  lay-verify="required" value={{competition.submission_path}} autocomplete="off" class="layui-input">
     </div>
   </div>
 
@@ -44,11 +43,27 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">座位-主机映射信息</label>
+        <label class="layui-form-label">host信息</label>
         <div class="layui-input-block">
             <input type="file" name="hostmapping" id="hostmapping" class="file_input"/>
         </div>
     </div>
+
+      <div class="layui-form-item">
+    <label class="layui-form-label">机房选择</label>
+    <div class="layui-input-block">
+      <select name="room" lay-verify="required">
+        {% for r in rooms %}
+            {% if r.id == competition.room_layout.id %}
+                <option value="{{ r.id }}" selected>{{r.name}}</option>
+            {% else %}
+                <option value="{{ r.id }}">{{r.name}}</option>
+            {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
 
 <div class="layui-form-item">
 <div class="layui-input-block">

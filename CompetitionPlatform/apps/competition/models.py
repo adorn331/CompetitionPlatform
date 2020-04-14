@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 
+class Room(models.Model):
+    name = models.CharField(max_length=64)
+    layout_matrix = models.CharField(max_length=512)
+
+
 class Competition(models.Model):
     name = models.CharField(max_length=64, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -9,6 +14,7 @@ class Competition(models.Model):
     submission_standard = JSONField()
 
     submission_path = models.CharField(max_length=64, default='/xxx/yyy') # todo get a valid default?
+    room_layout = models.ForeignKey(to=Room, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.name

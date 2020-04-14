@@ -1,4 +1,4 @@
-from apps.competition.models import Competition, Participant
+from apps.competition.models import Competition, Participant, Room
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -20,9 +20,11 @@ def competition_create(request):
             name = request.POST['name']
             description = request.POST['description']
             submission_path = request.POST['submission_path']
+            room_id = request.POST['room']
 
             # save basic info
             competition = Competition()
+            competition.room_layout = Room.objects.get(pk=room_id)
             competition.name = name
             competition.description = description
             competition.submission_path = submission_path
@@ -30,16 +32,16 @@ def competition_create(request):
             cid = competition.save()
 
             standard_bundle = request.FILES.get('standard_bundle')
-            print(standard_bundle)
-            competition.submission_standard = parse_standard_from_bundle(standard_bundle)
+            if standard_bundle:
+                competition.submission_standard = parse_standard_from_bundle(standard_bundle)
 
             namelist = request.FILES.get('namelist')
-            print(namelist)
-            parse_participants(namelist, competition)
+            if namelist:
+                parse_participants(namelist, competition)
 
             hostmapping = request.FILES.get('hostmapping')
-            print(hostmapping)
-            parse_hosts(hostmapping, competition)
+            if hostmapping:
+                parse_hosts(hostmapping, competition)
 
             competition.save()
 
@@ -49,6 +51,7 @@ def competition_create(request):
             traceback.print_exc()
             return HttpResponse('Internal error:' + str(e))
     elif request.method == 'GET':
+        rooms = Room.objects.all()
         return render(request, 'competition/create.html', locals())
 
 
@@ -132,9 +135,11 @@ def competition_update(request, cid):
         name = request.POST['name']
         description = request.POST['description']
         submission_path = request.POST['submission_path']
+        room_id = request.POST['room']
 
         competition.name = name
         competition.description = description
+        competition.room_layout = Room.objects.get(pk=room_id)
         competition.submission_path = submission_path
         competition.save()
 
@@ -154,4 +159,5 @@ def competition_update(request, cid):
         return redirect('/competition/list-admin')
 
     elif request.method == 'GET':
+        rooms = Room.objects.all()
         return render(request, 'competition/update.html', locals())
