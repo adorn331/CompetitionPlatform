@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'apps.authenz',
     'apps.competition',
@@ -256,3 +257,5 @@ DEFAULT_FROM_EMAIL = 'adorn331@163.com'
 # =========================================================================
 CLIENT_PORT = os.environ.get('CLIENT_PORT', '5000')
 CLIENT_TIMEOUT = os.environ.get('CLIENT_TIMEOUT', 1)
+
+SITE_ID = 1

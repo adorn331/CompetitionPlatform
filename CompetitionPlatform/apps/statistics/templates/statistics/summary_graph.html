@@ -20,7 +20,7 @@
   {% for row in participant_grid%}
     <tr>
         {% for p in row %}
-            <td bgcolor="{{ p.color }}">{{ p.name }}</td>
+            <td bgcolor="{{ p.color }}">{{ p.position }}</td>
         {% endfor %}
     </tr>
   {% endfor %}

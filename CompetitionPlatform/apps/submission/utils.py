@@ -112,15 +112,17 @@ def verify_and_filter_bundle(submission, origin_bundle, client_ip):
                 print(standard_files)
                 print('@@@@@')
 
-            if file_path not in bundle_files and not status_decided:
-                if os.path.split(file_path)[1] in bundle_files_without_dir:
-                    # 可能是BJ-01/task1.c 而 标准s是 BJ-01/task1/task1.c
-                    submission_status = '已提交:但规定子目录未建'
-                    status_decided = True
-                else:
-                    submission_status = '已提交:但部分文件未完成'
-                    status_decided = True
+            if file_path not in bundle_files:
                 missing_files.append(os.path.join(submission.participant.pno, file_path))
+                if not status_decided:
+                    if os.path.split(file_path)[1] in bundle_files_without_dir:
+                        # 可能是BJ-01/task1.c 而 标准s是 BJ-01/task1/task1.c
+                        submission_status = '已提交:但规定子目录未建'
+                        status_decided = True
+                    else:
+                        submission_status = '已提交:但部分文件未完成'
+                        status_decided = True
+
 
         submission.status = submission_status
         submission.bundle_structure = bundle_structure
