@@ -11,11 +11,12 @@ from apps.submission.models import Submission
 from django.conf import settings
 import csv, codecs
 from django.core.paginator import Paginator
+from apps.competition.utils import turn_0_1_to_num_matrix
+import json
 
 
 @login_required(login_url='/authenz/login')
 def summary_graph(request, cid):
-    from apps.competition.utils import parse_position
     color_mapping = {
         '已提交且符合规范': '#2ECC71',
         '提交失败': '#E74C3C',
@@ -26,29 +27,59 @@ def summary_graph(request, cid):
     domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
     if request.method == 'GET':
         username = request.user.username
-        participants = Competition.objects.get(pk=cid).participants.all().order_by('position')
-        participant_grid = []
-        max_col = 0
-        if participants:
-            grid_row = - 1
-            for p in participants:
-                if not p.position:
-                    p.position = '1-1'
-                cur_row, cur_col = parse_position(p.position)
-                max_col = max(cur_col, max_col)
-                if cur_row - 1 > grid_row:
-                    participant_grid.append([])
-                    grid_row += 1
-                participant_grid[grid_row].append(p)
+        competition = Competition.objects.get(pk=cid)
+        layout_str = competition.room_layout.layout_matrix
+        layout = json.loads(layout_str)
+        print(layout)
+        turn_0_1_to_num_matrix(layout)
+        print(layout)
 
-                if p.uploaded_submission.count() > 0:
-                    p.color = color_mapping[p.uploaded_submission.first().status.split(':')[0]]
+        participant_grid = layout.copy()
+        for i in range(len(participant_grid)):
+            for j in range(len(participant_grid[0])):
+                p = Participant.objects.filter(competition=competition, position=participant_grid[i][j]).first()
+                if participant_grid[i][j] != 0 and p:
+                    if p.uploaded_submission.count() > 0:
+                        p.color = color_mapping[p.uploaded_submission.first().status.split(':')[0]]
+                    else:
+                        p.color = color_mapping['']
+                    participant_grid[i][j] = p
                 else:
-                    p.color = color_mapping['']
-
+                    p = Participant()
+                    p.position = participant_grid[i][j]
+                    p.color = '#000000'
+                    participant_grid[i][j] = p
+        print(participant_grid)
+        max_col = len(participant_grid[0])
         col_range = range(max_col)
         percentage_width_percol = 100 / max_col
         print(participant_grid)
+
+
+        # username = request.user.username
+        # participants = Competition.objects.get(pk=cid).participants.all().order_by('position')
+        # participant_grid = []
+        # max_col = 0
+        # if participants:
+        #     grid_row = - 1
+        #     for p in participants:
+        #         if not p.position:
+        #             p.position = '1-1'
+        #         cur_row, cur_col = parse_position(p.position)
+        #         max_col = max(cur_col, max_col)
+        #         if cur_row - 1 > grid_row:
+        #             participant_grid.append([])
+        #             grid_row += 1
+        #         participant_grid[grid_row].append(p)
+        #
+        #         if p.uploaded_submission.count() > 0:
+        #             p.color = color_mapping[p.uploaded_submission.first().status.split(':')[0]]
+        #         else:
+        #             p.color = color_mapping['']
+        #
+        # col_range = range(max_col)
+        # percentage_width_percol = 100 / max_col
+        # print(participant_grid)
 
         return render(request, 'statistics/summary_graph.html', locals())
 

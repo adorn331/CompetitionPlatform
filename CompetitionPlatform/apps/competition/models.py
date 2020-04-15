@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import JSONField
 
 
 class Room(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     layout_matrix = models.CharField(max_length=512)
 
 

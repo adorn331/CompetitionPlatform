@@ -11,6 +11,7 @@ from apps.submission.models import Submission
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.urls import reverse
+from apps.competition.utils import parse_room_layout
 
 
 @login_required(login_url='/authenz/login')
@@ -19,7 +20,7 @@ def room_list(request):
     if request.method == 'GET':
         username = request.user.username
         room_list = Room.objects.all().order_by('name')
-        paginator = Paginator(room_list, 6)
+        paginator = Paginator(room_list, 5)
         page = request.GET.get('page')
         rooms = paginator.get_page(page)
         return render(request, 'room/list.html', locals())
@@ -38,10 +39,6 @@ def room_delete(request, rid):
 def room_create(request):
     user = request.user
 
-    def parse_layout(matrix_file):
-        print(matrix_file.read())
-        return 'test'
-
     if request.method == 'POST':
         try:
             name = request.POST['name']
@@ -50,7 +47,7 @@ def room_create(request):
             room.name = name
 
             matrix_file = request.FILES.get('matrix_file')
-            room.layout_matrix = parse_layout(matrix_file)
+            room.layout_matrix = parse_room_layout(matrix_file)
 
             room.save()
 
@@ -68,20 +65,14 @@ def room_create(request):
 def room_update(request, rid):
     user = request.user
 
-    def parse_layout(matrix_file):
-        print(matrix_file.read())
-        return 'test'
-
     if request.method == 'POST':
         try:
             name = request.POST['name']
 
             room = Room.objects.get(pk=rid)
-
-
             matrix_file = request.FILES.get('matrix_file')
             if matrix_file:
-                room.layout_matrix = parse_layout(matrix_file)
+                room.layout_matrix = parse_room_layout(matrix_file)
             room.save()
 
             return redirect(reverse('room_list'))

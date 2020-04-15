@@ -5,6 +5,31 @@ import shutil
 import tempfile
 from apps.competition.models import Competition, Participant
 import csv, zipfile
+import json
+
+
+def turn_0_1_to_num_matrix(matrix):
+    position_counter = 1
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i][j] == 1:
+                matrix[i][j] = position_counter
+                position_counter += 1
+
+
+def parse_room_layout(matrix_file):
+    with tempdir() as tmpdir:
+        # save memory file to disk
+        with open(tmpdir + 'tmp.csv', 'wb+') as f:
+            for chunk in matrix_file.chunks():
+                f.write(chunk)
+        # parse csv file to real participants
+        with open(tmpdir + 'tmp.csv', 'r', encoding='utf-8-sig') as f:
+            matrix = []
+            for line in f.readlines():
+                matrix.append(eval(f'[{line}]'))
+
+    return json.dumps(matrix)
 
 
 def parse_position(position):
