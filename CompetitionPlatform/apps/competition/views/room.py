@@ -4,14 +4,10 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import traceback
-from apps.competition.utils import parse_participants, parse_standard_from_bundle, parse_hosts
-import zipfile
-from apps.submission.utils import flatten_dir_structure
-from apps.submission.models import Submission
-from django.conf import settings
 from django.core.paginator import Paginator
 from django.urls import reverse
 from apps.competition.utils import parse_room_layout
+import json
 
 
 @login_required(login_url='/authenz/login')
@@ -23,6 +19,11 @@ def room_list(request):
         paginator = Paginator(room_list, 5)
         page = request.GET.get('page')
         rooms = paginator.get_page(page)
+        for r in rooms:
+            r.display_layout = ''
+            for line in json.loads(r.layout_matrix):
+                r.display_layout += str(line)
+                r.display_layout += '</br>'
         return render(request, 'room/list.html', locals())
 
 

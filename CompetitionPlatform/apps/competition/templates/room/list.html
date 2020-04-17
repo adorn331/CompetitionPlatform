@@ -26,7 +26,7 @@
     <tr>
     <td>{{ r.name }}</td>
     <td>
-          <a href="{% url 'participant_list' r.id %}" class="layui-btn layui-btn-radius layui-btn-normal">查看布局图</a>
+          <button id="displayDetail{{ r.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-radius layui-btn-normal">查看布局图</button>
 {#          <a href="{% url 'room_update' r.id %}" class="layui-btn layui-btn-radius">修改</a>#}
           <a href="{% url 'room_delete' r.id %}"  class="layui-btn layui-btn-radius layui-btn-danger">删除</a>
     </td>
@@ -65,4 +65,46 @@
     </span>
 </div>
 
+{% endblock %}
+
+{% block js %}
+<script>
+layui.use('layer', function() { //独立版的layer无需执行这一句
+    var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+    //触发事件
+    var active = {
+
+        offset: function (othis, content) {
+            var type = othis.data('type')
+                , text = othis.text();
+
+            layer.open({
+                type: 1
+                , offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                , id: 'displayDetail' + type //防止重复弹出
+                , content: '<div style="padding: 20px 40px;">' + content + '</div>'
+                , btn: '关闭全部'
+                , btnAlign: 'c' //按钮居中
+                , shade: 0 //不显示遮罩
+                , yes: function () {
+                    layer.closeAll();
+                    location.reload();
+                }
+            });
+        }
+
+    };
+
+    // for the detail layer
+    {% for r in rooms %}
+        $('#displayDetail{{ r.id }}').on('click', function () {
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis, '{{ r.display_layout | safe }}') : '';
+        });
+    {% endfor %}
+});
+
+
+</script>
 {% endblock %}
