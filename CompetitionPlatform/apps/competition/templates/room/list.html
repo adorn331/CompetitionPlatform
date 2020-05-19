@@ -17,7 +17,7 @@
   </colgroup>
   <thead>
     <tr>
-      <th>考场名名</th>
+      <th>考场名</th>
       <th>操作</th>
     </tr>
   </thead>
@@ -26,8 +26,9 @@
     <tr>
     <td>{{ r.name }}</td>
     <td>
-          <button id="displayDetail{{ r.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-radius layui-btn-normal">查看布局图</button>
+          <button id="displayDetail{{ r.id }}" data-method="offset" data-type="auto" class="layui-btn layui-btn-radius layui-btn">查看布局图</button>
 {#          <a href="{% url 'room_update' r.id %}" class="layui-btn layui-btn-radius">修改</a>#}
+          <a href="{% url 'room_update' r.id %}"  class="layui-btn layui-btn-radius layui-btn-normal">修改</a>
           <a href="{% url 'room_delete' r.id %}"  class="layui-btn layui-btn-radius layui-btn-danger">删除</a>
     </td>
     </tr>
@@ -69,8 +70,8 @@
 
 {% block js %}
 <script>
-layui.use('layer', function() { //独立版的layer无需执行这一句
-    var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+layui.use('layer', function() {
+    var $ = layui.jquery, layer = layui.layer;
 
     //触发事件
     var active = {

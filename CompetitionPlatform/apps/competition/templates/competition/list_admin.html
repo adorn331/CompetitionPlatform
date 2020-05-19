@@ -72,7 +72,6 @@
 
 {% block js %}
 <script>
-    // request all submission button
     var $ = layui.jquery;
     {% for c in competition_list%}
     $('#del{{ c.id }}').on('click', function(){

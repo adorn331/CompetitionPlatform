@@ -7,7 +7,7 @@
 </fieldset>
 
 <div align="center">
-<div>灰色：未收到提交 ｜ 绿色：提交且符合规范 ｜ 黄色：已提交但却结构有问题或文件缺失 ｜ 红色：学生未建文件夹或文件夹为空</div>
+<div>灰色：未收到提交 ｜ 绿色：提交且符合规范 ｜ 黄色：已提交但却结构有问题或文件缺失 ｜ 红色：学生未建文件夹或文件夹为空 ｜ 黑色：障碍物或空闲机器</div>
 </div>
 
 <table class="layui-table">
@@ -17,8 +17,14 @@
     {% endfor %}
   </colgroup>
   <tbody>
+  <tr>
+    {% for text in first_row %}
+        <td>{{ text }}</td>
+    {% endfor %}
+</tr>
   {% for row in participant_grid%}
     <tr>
+        <td>第{{ forloop.counter }}排</td>
         {% for p in row %}
             <td bgcolor="{{ p.color }}">{{ p.position }}</td>
         {% endfor %}

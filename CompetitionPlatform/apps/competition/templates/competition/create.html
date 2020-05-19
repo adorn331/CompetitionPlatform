@@ -29,30 +29,30 @@
   </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">标准格式包</label>
+        <label class="layui-form-label">标准格式包s</label>
         <div class="layui-input-block">
-            <input type="file" name="standard_bundle" id="standard_bundle" class="file_input"/>
+            <input type="file" required name="standard_bundle" id="standard_bundle" class="file_input"/>
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">参赛人员表</label>
         <div class="layui-input-block">
-            <input type="file" name="namelist" id="namelist" class="file_input"/>
+            <input type="file" required name="namelist" id="namelist" class="file_input"/>
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">host信息</label>
         <div class="layui-input-block">
-            <input type="file" name="hostmapping" id="hostmapping" class="file_input"/>
+            <input type="file" required name="hostmapping" id="hostmapping" class="file_input"/>
         </div>
     </div>
 
   <div class="layui-form-item">
     <label class="layui-form-label">机房选择</label>
     <div class="layui-input-block">
-      <select name="room" lay-verify="required">
+      <select name="room" lay-verify="required" required>
         {% for r in rooms %}
         <option value="{{ r.id }}">{{r.name}}</option>
         {% endfor %}
@@ -67,11 +67,17 @@
       <button type="reset" class="layui-btn layui-btn-primary">重置</button>
     </div>
     </div>
-
+  </div>
 
 </form>
 
+{% endblock %}
 
-
-
+{% block js %}
+<script>
+    {% ifequal rooms.len 0  %}
+        alert('未配置任何考场信息，请先前往配置！');
+        window.location.href="{% url 'room_create' %}";
+    {% endifequal %}
+</script>
 {% endblock %}

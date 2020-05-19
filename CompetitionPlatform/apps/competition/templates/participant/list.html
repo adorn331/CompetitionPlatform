@@ -96,7 +96,6 @@
 
 {% block js %}
 <script>
-    // request all submission button
     var $ = layui.jquery;
     {% for p in participants%}
     $('#del{{ p.id }}').on('click', function(){

@@ -29,10 +29,14 @@ def room_list(request):
 
 @login_required(login_url='/authenz/login')
 def room_delete(request, rid):
-    user = request.user
-    room_instance = Room.objects.get(pk=rid)
-    if room_instance:
-        room_instance.delete()
+    from django.db.models.deletion import ProtectedError
+    try:
+        user = request.user
+        room_instance = Room.objects.get(pk=rid)
+        if room_instance:
+            room_instance.delete()
+    except ProtectedError as e:
+        return HttpResponse('考场已被其他比赛引用，删除失败！需要删除请先删除比赛！')
     return redirect(reverse('room_list'))
 
 
@@ -56,7 +60,7 @@ def room_create(request):
 
         except Exception as e:
             traceback.print_exc()
-            return HttpResponse('Internal error:' + str(e))
+            return HttpResponse('格式解析错误！请参照参考0-1矩阵文本文件来编写布局矩阵！')
 
     elif request.method == 'GET':
         return render(request, 'room/create.html', locals())
@@ -80,7 +84,8 @@ def room_update(request, rid):
 
         except Exception as e:
             traceback.print_exc()
-            return HttpResponse('Internal error:' + str(e))
+            return HttpResponse('格式解析错误！请参照参考0-1矩阵文本文件来编写布局矩阵！')
 
     elif request.method == 'GET':
+        room = Room.objects.get(pk=rid)
         return render(request, 'room/update.html', locals())

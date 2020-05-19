@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'room-list', room_list, name='room_list'),
     # url(r'room-(?P<rid>[0-9]{1,})-update', room_update, name='room_update'),
     url(r'room-(?P<rid>[0-9]{1,})-delete', room_delete, name='room_delete'),
+    url(r'room-(?P<rid>[0-9]{1,})-update', room_update, name='room_update'),
     url(r'room-create', room_create, name='room_create'),
 
     # Competition url

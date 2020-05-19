@@ -30,7 +30,7 @@ def upload_submission(call_back_addr, submission_path, pno, cname):
             copied_submission_path = os.path.join(tmpdir, pno)
             shutil.copytree(target_path,copied_submission_path)
             submission_bundle_path = os.path.join(tmpdir, f'{pno}.zip')
-            _make_zip(target_path, submission_bundle_path)
+            _make_zip(copied_submission_path, submission_bundle_path)
 
             # cal md5
             with open(submission_bundle_path, 'rb') as bundle:

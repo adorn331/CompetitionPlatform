@@ -40,7 +40,9 @@ def submission_create(request):
             response['Access-Control-Allow-Origin'] = '*'  # allow CORS
             return response
 
-        verify_and_filter_bundle(submission, bundle, get_client_ip(request))
+        import threading
+        t = threading.Thread(target=verify_and_filter_bundle, args=(submission, bundle, get_client_ip(request),))
+        t.start()
 
         inspect_plagiarism(Competition.objects.get(name=cname), submission)
 
@@ -133,7 +135,7 @@ def download_all_submission(request, cid):
 
     # Folder name in ZIP archive which contains the above files
     # E.g [thearchive.zip]/somefiles/file2.txt
-    zip_subdir = f"{competition.name}_all_sub"
+    zip_subdir = f"{competition.name}_all_submission"
     zip_filename = f"{zip_subdir}.zip"
 
     # Open BytesIO to grab in-memory ZIP contents
@@ -160,7 +162,7 @@ def download_all_submission(request, cid):
 
     return resp
 
-
+# not used
 def compare_to_manual_collected(request, cid):
     msg = ''
 

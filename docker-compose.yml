@@ -112,7 +112,7 @@ services:
     container_name: rabbit
 
   # --------------------------------------------------------------------------
-  # Celery Workers: can work, for later use.
+  # Celery Workers
   # --------------------------------------------------------------------------
   worker_site:
     build:
@@ -120,6 +120,9 @@ services:
       dockerfile: docker/django/Dockerfile
     restart: unless-stopped
     command: sh /app/docker/run_site.sh
+    depends_on:
+      - rabbit
+      - django
     volumes:
       - ./CompetitionPlatform:/app/CompetitionPlatform
       - ./utils:/app/utils
@@ -139,21 +142,31 @@ services:
         max-size: "200k"
     container_name: worker_site
 
-  # worker_compute:
-  #   build:
-  #     context: .
-  #     dockerfile: compute_worker/Dockerfile
-  #   privileged: true
-  #   volumes:
-  #     - ${LOGGING_DIR}/worker_compute:/var/log/
-  #     - ${SUBMISSION_TEMP_DIR}:${SUBMISSION_TEMP_DIR}
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   env_file: compute_worker/.env
-  #   links:
-  #     - rabbit
-  #   logging:
-  #     options:
-  #       max-size: "200k"
-  #   mem_limit: 1g
-  #   memswap_limit: 1g
-  #   container_name: worker_compute    
+  worker_site2:
+    image: competitionplatform_worker_site
+    # build:
+    #   context: .
+    #   dockerfile: docker/django/Dockerfile
+    restart: unless-stopped
+    command: sh /app/docker/run_site.sh
+    depends_on:
+      - rabbit
+      - django
+    volumes:
+      - ./CompetitionPlatform:/app/CompetitionPlatform
+      - ./utils:/app/utils
+      - ./docker:/app/docker
+      - ./certs:/app/certs
+      - ${LOGGING_DIR}/worker_site:/var/log/
+    environment:
+      # Stop memory leaks
+      - REQUESTS_CA_BUNDLE=/usr/local/lib/python3.7/site-packages/certifi/cacert.pem
+      - DEBUG=False
+    env_file: .env
+    links:
+      - postgres
+      - rabbit
+    logging:
+      options:
+        max-size: "200k"
+    container_name: worker_site2

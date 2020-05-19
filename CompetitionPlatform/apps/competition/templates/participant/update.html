@@ -9,7 +9,7 @@
 <form class="layui-form" method="post" action="{% url 'participant_update' competition.id participant.id%}" enctype="multipart/form-data">
 
   <div class="layui-form-item">
-    <label class="layui-form-label">考生编号</label>
+    <label class="layui-form-label">考号</label>
     <div class="layui-input-block">
       <input type="text" name="pno" required  lay-verify="required" value="{{ participant.pno }}" placeholder="请输入考生编号" autocomplete="off" class="layui-input">
     </div>
@@ -61,7 +61,7 @@
    <div class="layui-form-item">
     <label class="layui-form-label">座位编号</label>
     <div class="layui-input-block">
-      <input type="text" name="position" required  lay-verify="required" value="{{ participant.position }}" placeholder="请输入考生座位编号，例如3-2" autocomplete="off" class="layui-input">
+      <input type="text" name="position" required  lay-verify="required" value="{{ participant.position }}" placeholder="请输入考生座位编号" autocomplete="off" class="layui-input">
     </div>
   </div>
 

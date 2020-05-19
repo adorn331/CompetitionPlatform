@@ -87,7 +87,7 @@ def competition_detail(request, cid):
     user = request.user
     competition = Competition.objects.get(pk=cid)
     participants_list = competition.participants.all().order_by('pno')
-    paginator = Paginator(participants_list, 13)
+    paginator = Paginator(participants_list, 11)
     page = request.GET.get('page')
     participants = paginator.get_page(page)
 

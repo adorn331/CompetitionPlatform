@@ -27,7 +27,8 @@ def parse_room_layout(matrix_file):
         with open(tmpdir + 'tmp.csv', 'r', encoding='utf-8-sig') as f:
             matrix = []
             for line in f.readlines():
-                matrix.append(eval(f'[{line}]'))
+                if line != '\n':
+                    matrix.append(eval(f'[{line}]'))
 
     return json.dumps(matrix)
 

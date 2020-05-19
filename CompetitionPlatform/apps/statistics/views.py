@@ -50,11 +50,14 @@ def summary_graph(request, cid):
                     p.color = '#000000'
                     participant_grid[i][j] = p
         print(participant_grid)
-        max_col = len(participant_grid[0])
+        max_col = len(participant_grid[0]) + 1
         col_range = range(max_col)
         percentage_width_percol = 100 / max_col
         print(participant_grid)
 
+        first_row = ['']
+        for i in range(1, max_col):
+            first_row.append(f'第{i}列')
 
         # username = request.user.username
         # participants = Competition.objects.get(pk=cid).participants.all().order_by('position')
@@ -130,21 +133,27 @@ def completion_statistics(request, cid):
     for p in participants:
         p.submission = Submission.objects.filter(participant=p).first()
         if p.submission:
+            missing_task_set = set()
             # p.submission.status = '已提交且符合规范' if p.submission.valid else '已提交但不符合规范'
 
             p.display_missing = ''
             if p.submission.missing_files:
                 file_list = flatten_dir_structure(p.submission.missing_files)
                 for i in file_list:
-                    p.display_missing = p.display_missing + i.split('/')[-1] + ' ｜ '
-                p.display_missing = p.display_missing[:-2]
+                    missing_task_set.add((i.split('/')[-1]).split('.')[0])
+                #     p.display_missing = p.display_missing + i.split('/')[-1] + ' ｜ '
+                # p.display_missing = p.display_missing[:-2]
+                p.display_missing = ' | '.join(missing_task_set)
         else:
+            missing_task_set = set()
             p.display_missing = ''
             if competition.submission_standard:
                 file_list = flatten_dir_structure(competition.submission_standard)
                 for i in file_list:
-                    p.display_missing = p.display_missing + i.split('/')[-1] + ' ｜ '
-                p.display_missing = p.display_missing[:-2]
+                    missing_task_set.add((i.split('/')[-1]).split('.')[0])
+                    # p.display_missing = p.display_missing + i.split('/')[-1] + ' ｜ '
+                # p.display_missing = p.display_missing[:-2]
+                p.display_missing = ' | '.join(missing_task_set)
 
     domain = settings.COMPETITIONPLATFORM_SITE_DOMAIN
 

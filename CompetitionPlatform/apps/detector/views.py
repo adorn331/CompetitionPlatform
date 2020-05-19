@@ -38,7 +38,7 @@ def plagiarism_detail(request, cid):
     competition = Competition.objects.get(pk=cid)
 
     threshold = request.GET.get('threshold', 90)
-    similarity_records_list = Similarity.objects.filter(competition=competition, percentage__gte=threshold)
+    similarity_records_list = Similarity.objects.filter(competition=competition, percentage__gte=threshold).order_by('-percentage')
     paginator = Paginator(similarity_records_list, 10)
     page = request.GET.get('page')
     similarity_records = paginator.get_page(page)
