@@ -3,9 +3,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    # demo field for later extensions
+    # 已从AbstractUser继承name / password / email等字段
     nick_name = models.CharField(max_length=50, blank=True)
-    isactivate = models.BooleanField(default=False)
+    isactivate = models.BooleanField(default=False) # 是否已邮箱激活
 
 
     class Meta(AbstractUser.Meta):
