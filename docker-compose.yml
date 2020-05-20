@@ -19,7 +19,7 @@ services:
       - ./docker:/app/docker
       - ./CompetitionPlatform:/app/CompetitionPlatform
       - ${LOGGING_DIR}/nginx:/var/log/nginx/
-    env_file: .env
+    env_file: envfile.txt
     links:
       - django:django
     logging:
@@ -43,7 +43,7 @@ services:
       - ${LOGGING_DIR}/psql:/var/log/psql
       - ${DB_DATA_PATH}:/var/lib/postgresql/data
       - ./backups:/app/backups
-    env_file: .env
+    env_file: envfile.txt
     logging:
       options:
         max-size: "200k"
@@ -69,7 +69,7 @@ services:
       - ./docker:/app/docker
       - ${LOGGING_DIR}/django:/var/log/django/
       - ./backups:/app/backups
-    env_file: .env
+    env_file: envfile.txt
     environment:
       - CONFIG_SERVER_NAME=${CompetitionPlatform_SITE_DOMAIN}
       - PYTHONUNBUFFERED=1
@@ -97,7 +97,7 @@ services:
     environment:
       - RABBITMQ_LOGS=/var/log/rabbitmq/output.log
       - RABBITMQ_SASL_LOGS=/var/log/rabbitmq/output_sasl.log
-    env_file: .env
+    env_file: envfile.txt
     volumes:
       - ./docker:/app/docker
       - ./certs:/app/certs
@@ -133,7 +133,7 @@ services:
       # Stop memory leaks
       - REQUESTS_CA_BUNDLE=/usr/local/lib/python3.7/site-packages/certifi/cacert.pem
       - DEBUG=False
-    env_file: .env
+    env_file: envfile.txt
     links:
       - postgres
       - rabbit
@@ -162,7 +162,7 @@ services:
       # Stop memory leaks
       - REQUESTS_CA_BUNDLE=/usr/local/lib/python3.7/site-packages/certifi/cacert.pem
       - DEBUG=False
-    env_file: .env
+    env_file: envfile.txt
     links:
       - postgres
       - rabbit

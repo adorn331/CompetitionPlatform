@@ -36,7 +36,7 @@ password = '$PASS';
 email = '$MAIL'; 
 
 if User.objects.filter(username=username).count()==0: 
-    User.objects.create_superuser(username, email, password); 
+    User.objects.create_superuser(username, email, password, isactivate=True); 
     print('Superuser created.'); 
 else: 
     print('Superuser creation skipped.'); 
